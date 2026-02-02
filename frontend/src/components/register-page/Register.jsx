@@ -1,15 +1,15 @@
-import "./Login.css";
+import "./Register.css";
 
-export default function Login({ setHasAccount }) {
+export default function Register({ setHasAccount }) {
     return(
         <div className="login-container">
-            <h1>Zaloguj się</h1>
+            <h1>Zarejestruj się</h1>
             <div className="input-container">
                 <input type="text" placeholder="Login"/>
                 <input type="password" placeholder="Hasło"/>
             </div>
-            <p onClick={() => setHasAccount(false)}>Nie posiadasz jeszcze konta?</p>
-            <button>Zaloguj</button>
+            <p onClick={() => setHasAccount(true)}>Posiadasz już konto?</p>
+            <button>Zarejestruj się</button>
         </div>
     )
 }
