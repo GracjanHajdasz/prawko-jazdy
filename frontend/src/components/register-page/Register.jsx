@@ -3,6 +3,7 @@ import { useState } from "react"
 
 export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setUsers }) {
     const [ isLoginAvailable, setIsLoginAvailable] = useState(true)
+    const [ isEmpty, setIsEmpty ] = useState(false) 
     
     function saveLogin(event) {
         setLogin(event.target.value)
@@ -36,6 +37,15 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
             addUser()
         }
     }
+
+    function checkIfEmpty(){
+        if(login === "" || password === ""){
+            setIsEmpty(true)
+            console.log("login or password is empty")
+        } else {
+            checkIfUserExists()
+        }
+    }
     return(
         <div className="login-container">
             <h1>Zarejestruj się</h1>
@@ -44,7 +54,7 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
                 <input type="password" placeholder="Hasło" onChange={savePassword}/>
             </div>
             <p onClick={() => setHasAccount(true)}>Posiadasz już konto?</p>
-            <button onClick={()=>(checkIfUserExists())} >Zarejestruj się</button>
+            <button onClick={()=>(checkIfEmpty())} >Zarejestruj się</button>
         </div>
     )
 }
