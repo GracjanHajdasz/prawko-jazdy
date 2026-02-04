@@ -2,7 +2,7 @@ import "./Login.css";
 import { useState } from "react";
 
 export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setUsers }) {
-    const [ isEmpty, setIsEmpty ] = useState(false) 
+    const [ isEmpty, setIsEmpty ] = useState(false)
     
     function saveLogin(event) {
         setLogin(event.target.value)

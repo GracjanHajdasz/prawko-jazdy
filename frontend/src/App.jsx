@@ -2,12 +2,14 @@ import "./App.css";
 import { useState, useEffect } from "react"; 
 import Login from "./components/login-page/Login.jsx";
 import Register from "./components/register-page/Register.jsx";
+import PopUp from "./components/pop-up/PopUp.jsx";
 
 export default function App() {
   const [hasAccount, setHasAccount] = useState(true); //checks if user has an account
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState([])
+  const [showPopUp, setShowPopUp] = useState(false)
 
   useEffect(
     ()=>{
@@ -33,6 +35,11 @@ export default function App() {
       setPassword={setPassword}
       users={users}
       setUsers={setUsers} />}
+
+      {
+        showPopUp &&
+        <PopUp/>
+      }
     </div>
   );
 }
