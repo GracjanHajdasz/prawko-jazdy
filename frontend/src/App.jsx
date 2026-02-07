@@ -10,6 +10,7 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState([])
   const [showPopUp, setShowPopUp] = useState(false)
+  const [ popUpText, setPopUpText] = useState("")
 
   useEffect(
     ()=>{
@@ -26,7 +27,11 @@ export default function App() {
       password={password} 
       setPassword={setPassword}
       users={users}
-      setUsers={setUsers} /> : 
+      setUsers={setUsers}
+      showPopUp={showPopUp}
+      setShowPopUp={setShowPopUp}
+      popUpText={popUpText}
+      setPopUpText={setPopUpText} /> : 
       <Register 
       setHasAccount={setHasAccount} 
       login={login} 
@@ -34,11 +39,15 @@ export default function App() {
       password={password} 
       setPassword={setPassword}
       users={users}
-      setUsers={setUsers} />}
+      setUsers={setUsers}
+      showPopUp={showPopUp}
+      setShowPopUp={setShowPopUp}
+      popUpText={popUpText}
+      setPopUpText={setPopUpText} />}
 
       {
         showPopUp &&
-        <PopUp/>
+        <PopUp popUpText={popUpText}/>
       }
     </div>
   );

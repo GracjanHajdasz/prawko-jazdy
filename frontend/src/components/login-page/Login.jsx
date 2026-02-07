@@ -1,7 +1,8 @@
 import "./Login.css";
 import { useState } from "react";
+import axios from "axios";
 
-export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setUsers }) {
+export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setUsers, showPopUp, setShowPopUp, setPopUpText }) {
     const [ isEmpty, setIsEmpty ] = useState(false)
     
     function saveLogin(event) {
@@ -16,6 +17,8 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
         if(login === "" || password === ""){
             setIsEmpty(true)
             console.log("login or password is empty");
+            setPopUpText("login or password is empty")
+            setShowPopUp(true)
         } else {
             handleLogin();
         }
@@ -24,10 +27,17 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
     function handleLogin(){
         const user = users.find( (u)=>u.login === login && u.password === password )
 
+        axios.post("http://localhost:5000/api/auth/login", {
+            username: login,
+            password: password
+        }).then(response => console.log(response.data))
+        
         if(user){
             console.log("logged in as: "+login)
         } else {
             console.log("cant log in")
+            setPopUpText("cant log in")
+            setShowPopUp(true)
         }
     }
     

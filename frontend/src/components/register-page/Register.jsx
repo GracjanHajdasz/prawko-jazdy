@@ -1,9 +1,10 @@
 import "./Register.css";
 import { useState } from "react"
+import axios from "axios"
 
 export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setUsers }) {
     const [ isLoginAvailable, setIsLoginAvailable] = useState(true)
-    const [ isEmpty, setIsEmpty ] = useState(false) 
+    const [ isEmpty, setIsEmpty ] = useState(false)
     
     function saveLogin(event) {
         setLogin(event.target.value)
@@ -21,6 +22,10 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
                 login:login
             }
         ];
+        axios.post("http://localhost:5000/api/auth/register", {
+            username: login,
+            password: password
+        }).then(response => console.log(response.data))
         setUsers(newUser);
         setLogin("");
         setPassword("")

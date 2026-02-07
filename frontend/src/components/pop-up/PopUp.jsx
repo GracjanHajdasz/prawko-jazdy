@@ -1,10 +1,11 @@
 import "./PopUp.css"
 
-export default function PopUp() {
+export default function PopUp({ popUpText }) {
+    
     return (
         <div className="popup">
             <h2>Tytuł alertu</h2>
-            <p>test test test test test test test test </p>
+            <p>{popUpText}</p>
         </div>
     )
 }
