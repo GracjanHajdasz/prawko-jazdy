@@ -1,4 +1,4 @@
-const { callPython } = require('../services/pythonService'); 
+const { callPython } = require('../pythonService'); 
 
 exports.register = async (req, res) => {
     const { username, password } = req.body;
