@@ -2,8 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const app = express();
+const authRoutes = require('./routes/routes');
 
 app.use(express.json());
+app.use('/api/auth', authRoutes);
 
 const PYTHON_URL = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
 const PORT = process.env.PORT || 5000;

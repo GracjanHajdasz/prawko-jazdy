@@ -1,53 +1,46 @@
-const db = require('../config/db');
+const { callPython } = require('../services/pythonService'); 
 
 exports.register = async (req, res) => {
-    try {
-        const { username, password } = req.body;
-
-        const userExists = await db.query('SELECT * FROM users WHERE username = $1', [username]);
-        if(userExists.rows.length > 0) {
-            return res.status(400).json({ message: 'User already registered'});
-        }
-
-        await db.query(
-            'INSERT INTO users (username, password) VALUES ($1, $2)', 
-            [username, password]);
-
-        res.status(201).json({ message: 'User registered successfully'});
-
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: 'Error during registration'});
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: "Missing username or password" });
     }
-}
 
-exports.login = async( req, res) => {
-    try {
-        const { username, password } = req.body;
+    const result = await callPython({
+        query_type: "register",
+        username, 
+        password 
+    });
 
-        const result = await db.query(
-            'SELECT * FROM users WHERE username = $1 and password = $2', 
-            [username, password])
+    res.status(result.status).json(result.data);
+};
 
-        if (result.rows.length === 0) {
-            return res.status(401).json({ message: "Incorrect username or password"});
-        }
-
-        const user = result.rows[0];
-
-        if (result.rows.length > 0) {
-            res.json({ message: "User logged in sucessfully", 
-            user: { 
-                id: user.id, 
-                username: user.username 
-            }
-            });
-        } else {
-            res.status(401).json({ message: "Incorrect username or password"});
-        }
-
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: 'Error during login'});
+exports.login = async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: "Missing username or password" });
     }
-}
+
+    const result = await callPython({
+        query_type: "login",
+        username, 
+        password
+    });
+
+    res.status(result.status).json(result.data);
+};
+
+exports.getUserData = async (req, res) => {
+    const { user } = req.body;
+    
+    if (!user || !user.id) {
+        return res.status(400).json({ error: "Missing User ID"});
+    }
+
+    const result = await callPython({
+        query_type: "fetch_profile",
+        user_id: user.id
+    });
+
+    res.status(result.status).json(result.data);
+};
