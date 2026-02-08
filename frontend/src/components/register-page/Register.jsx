@@ -2,7 +2,7 @@ import "./Register.css";
 import { useState } from "react"
 import axios from "axios"
 
-export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setUsers }) {
+export default function Login({ setHasAccount, login, setLogin, password, setPassword, users, setShowPopUp, setPopUpText }) {
     const [ isLoginAvailable, setIsLoginAvailable] = useState(true)
     const [ isEmpty, setIsEmpty ] = useState(false)
     
@@ -38,6 +38,10 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
         if (user) {
             setIsLoginAvailable(false)
             console.log("user already exists")
+            setPopUpText("user already exists")
+            setShowPopUp(true)
+            setIsLoginAvailable(true)
+            
         } else {
             addUser()
         }
@@ -47,6 +51,9 @@ export default function Login({ setHasAccount, login, setLogin, password, setPas
         if(login === "" || password === ""){
             setIsEmpty(true)
             console.log("login or password is empty")
+            setPopUpText("login or password is empty")
+            setShowPopUp(true)
+            setIsEmpty(false)
         } else {
             checkIfUserExists()
         }

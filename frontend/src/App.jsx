@@ -10,7 +10,7 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [users, setUsers] = useState([])
   const [showPopUp, setShowPopUp] = useState(false)
-  const [ popUpText, setPopUpText] = useState("")
+  const [popUpText, setPopUpText] = useState("")
 
   useEffect(
     ()=>{
@@ -47,7 +47,7 @@ export default function App() {
 
       {
         showPopUp &&
-        <PopUp popUpText={popUpText}/>
+        <PopUp popUpText={popUpText} duration={3000} show={showPopUp} setShowPopUp={setShowPopUp} />
       }
     </div>
   );
