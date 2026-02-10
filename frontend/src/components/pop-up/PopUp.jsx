@@ -7,7 +7,7 @@ export default function PopUp({ popUpText, show, duration, setShowPopUp }) {
 
     useEffect(() => {
         let autoCloseTimer;
-        let removeTimer;
+        let removeTimer; //test
 
         if (show) {
             setIsVisible(true);
