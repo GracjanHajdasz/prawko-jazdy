@@ -34,7 +34,7 @@ export default function PopUp({ popUpText, show, duration, setShowPopUp }) {
     if (!isVisible) return null;
     return (
         <div className={`popup ${isClosing ? 'closing' : ''}`}>
-            <h2>Tytuł alertu</h2>
+            <h2>Komunikat</h2>
             <p>{popUpText}</p>
         </div>
     )

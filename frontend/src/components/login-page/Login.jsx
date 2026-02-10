@@ -25,7 +25,7 @@ export default function Login({
     if (clientid === "" || password === "") {
       setIsEmpty(true);
       console.log("login or password is empty");
-      setPopUpText("login or password is empty");
+      setPopUpText("login lub hasło są puste");
       setShowPopUp(true);
       setIsEmpty(false);
     } else {
@@ -40,7 +40,10 @@ export default function Login({
         clientid: clientid,
         password: password,
       })
-      .then((response) => console.log(response.data));
+      .then((response) => {
+        setPopUpText(response.data["Msg"]);
+        setShowPopUp(true);
+      });
   }
 
   return (

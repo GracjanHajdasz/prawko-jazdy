@@ -23,11 +23,14 @@ export default function Login({
 
   function checkIfUserExists() {
     axios
-      .post("http://localhost:5000/api/auth/register", {
+      .post("http://localhost:5000/api/auth/login", {
         clientid: clientid,
         password: password,
       })
-      .then((response) => console.log(response.data));
+      .then((response) => {
+        setPopUpText(response.data["Msg"]);
+        setShowPopUp(true);
+      });
     setClientid("");
     setPassword("");
     setHasAccount(true);
@@ -37,7 +40,7 @@ export default function Login({
     if (clientid === "" || password === "") {
       setIsEmpty(true);
       console.log("login or password is empty");
-      setPopUpText("login or password is empty");
+      setPopUpText("login lub hasło są puste");
       setShowPopUp(true);
       setIsEmpty(false);
     } else {
