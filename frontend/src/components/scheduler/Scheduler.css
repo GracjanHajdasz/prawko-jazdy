@@ -1,0 +1,63 @@
+.scheduler-container{
+    background-color: white;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 30vw;
+    height: 50vh;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.scheduler-container header h2 {
+    border: none;
+    font-size: 2.7rem;
+    align-self: flex-start;
+}
+
+.scheduler-container header {
+    border-bottom: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+}
+
+.slots-container {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem 0.5rem;
+}
+
+.slot{
+    
+    border: 0;
+    color: white;
+    background-color: rgb(40, 80, 255);
+    border-radius: 0.5em;
+    font-size: 1.15rem;
+    padding: 0.5rem;
+    font-weight: 600;
+    transition: 0.15s ease;
+    cursor: pointer;
+    box-shadow: 0px 4px 13px -2px rgba(66, 68, 90, 1);
+    width: 20%;
+    height: 5vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.slot:hover {
+  translate: 0 0.225em;
+}
+
+.slot:active{
+    translate: 0 0.400em;
+}

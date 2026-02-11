@@ -19,9 +19,38 @@ const fetchMockSlots = (date) => {
 };
 
 export default function Scheduler() {
+  const [slots, setSlots] = useState([]);
+  const [date, setDate] = useState("");
+
+  useEffect(() => {
+    if (!date) return;
+
+    fetchMockSlots(date).then((data) => {
+      setSlots(data);
+    });
+  }, [date]);
+
   return (
     <div className="scheduler-container">
-      <h1>Harmonogram</h1>
+      <header>
+        <h2>Harmonogram</h2>
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+      </header>
+      <main>
+        {slots.length === 0 ? (
+          <p>Brak wolnych godzin w tym dniu</p>
+        ) : (
+          <div className="slots-container">
+            {slots.map((slot) => (
+              slot.status === "available" && (
+                <div key={slot.time} className="slot">
+                  {slot.time}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
