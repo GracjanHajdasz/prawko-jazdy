@@ -3,17 +3,19 @@ import { useState } from "react";
 import Login from "./components/login-page/Login.jsx";
 import Register from "./components/register-page/Register.jsx";
 import PopUp from "./components/pop-up/PopUp.jsx";
+import Scheduler from "./components/scheduler/Scheduler.jsx";
 
 export default function App() {
-  const [clientid, setClientid] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPopUp, setShowPopUp] = useState(false);
-  const [popUpText, setPopUpText] = useState("");
-  const [hasAccount, setHasAccount] = useState(true);
+  // const [clientid, setClientid] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [showPopUp, setShowPopUp] = useState(false);
+  // const [popUpText, setPopUpText] = useState("");
+  // const [hasAccount, setHasAccount] = useState(true);
 
   return (
     <div className="app">
-      {hasAccount ? (
+      <Scheduler />
+      {/* {hasAccount ? (
         <Login
           setHasAccount={setHasAccount}
           clientid={clientid}
@@ -46,7 +48,7 @@ export default function App() {
           show={showPopUp}
           setShowPopUp={setShowPopUp}
         />
-      )}
+      )} */}
     </div>
   );
 }
