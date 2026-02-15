@@ -10,10 +10,15 @@
     scrollbar-width: none;
 }
 
+.scheduler-container header p{
+    text-decoration: none;
+    font-size: larger;
+}
+
 .scheduler-container header h2 {
     border: none;
     font-size: 2.7rem;
-    align-self: flex-start;
+    margin-bottom: 0rem;
 }
 
 .scheduler-container header {
@@ -23,6 +28,11 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 0;
+    margin: 0 0.75rem
+}
+
+.scheduler-container header input {
+    width: 10vw;
 }
 
 .slots-container {
@@ -30,34 +40,8 @@
     gap: 0.75rem;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-start;
     padding: 1rem 0.5rem;
-}
-
-.slot{
-    
-    border: 0;
-    color: white;
-    background-color: rgb(40, 80, 255);
-    border-radius: 0.5em;
-    font-size: 1.15rem;
-    padding: 0.5rem;
-    font-weight: 600;
-    transition: 0.15s ease;
-    cursor: pointer;
-    box-shadow: 0px 4px 13px -2px rgba(66, 68, 90, 1);
-    width: 20%;
-    height: 5vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-.slot:hover {
-  translate: 0 0.225em;
-}
-
-.slot:active{
-    translate: 0 0.400em;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: center;
 }
