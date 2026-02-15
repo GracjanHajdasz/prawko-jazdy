@@ -18,7 +18,7 @@
   text-align: center;
 }
 
-.slot-active {
+.active {
   border: 0;
   color: white;
   background-color: rgb(40, 80, 255);
@@ -46,10 +46,10 @@
   translate: 0 0.4em;
 }
 
-.slot-active:hover {
+.active:hover {
   translate: 0 0.225em;
 }
 
-.slot-active:active {
+.active:active {
   translate: 0 0.4em;
 }

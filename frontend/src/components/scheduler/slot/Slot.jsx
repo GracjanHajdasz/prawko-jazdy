@@ -1,16 +1,19 @@
+import React from "react";
 import "./Slot.css";
-import { useState } from "react";
 
-export default function Slot({ time }) {
-  const [isActive, setIsActive] = useState(false);
-
-  function handleClick() {
-    setIsActive((v) => !v);
-  }
-
+// Używamy React.memo, aby zapobiec niepotrzebnym renderom, jeśli propsy się nie zmieniły
+const Slot = React.memo(({ time, isSelected, onSelect, disabled }) => {
   return (
-    <div onClick={handleClick} className={"slot" + (isActive ? "-active" : "")}>
+    <button
+      type="button"
+      onClick={() => onSelect(time)}
+      disabled={disabled}
+      className={`slot ${isSelected ? "active" : ""}`}
+      aria-pressed={isSelected}
+    >
       {time}
-    </div>
+    </button>
   );
-}
+});
+
+export default Slot;
