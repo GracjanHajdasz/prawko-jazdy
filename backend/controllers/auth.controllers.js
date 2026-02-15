@@ -6,7 +6,7 @@ exports.register = async (req, res) => {
 
         if (!clientid || !password) {
             return res.status(400).json({ 
-                error: "Brakuje numeru użytkownika lub hasła" 
+                error: "Brak numeru użytkownika lub hasła" 
             });
         }
 
@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
             throw new Error("Brak odpowiedzi podczas rejestracji użytkownika");
         }
 
-        res.status(result.status || 201).json(result.data || { msg: "Użytkownik zarejestrowany" });
+        res.status(result.status || 201).json({ msg: "Użytkownik zarejestrowany" });
 
     } catch (error) {
         console.error("Błąd podczas próby rejestracji:", error.message);
@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
     try {
         const { clientid, password } = req.body;
         if (!clientid || !password) {
-            return res.status(400).json({ error: "Brakuje numeru użytkownika lub hasła" });
+            return res.status(400).json({ error: "Brak numeru użytkownika lub hasła" });
         }
 
         const result = await callPython({
@@ -51,7 +51,7 @@ exports.login = async (req, res) => {
             throw new Error("Brak odpowiedzi podczas logowania użytkownika");
         }
 
-        res.status(result.status || 200).json(result.data || {});
+        res.status(result.status).json({msg: "Zalogowano pomyślnie"});
     } catch (error) {
         console.error("Błąd podczas próby logowania:", error.message);
         res.status(500).json({ 
@@ -65,12 +65,12 @@ exports.getUserData = async (req, res) => {
     const { user } = req.body;
     
     if (!user || !user.id) {
-        return res.status(400).json({ error: "Brakuje danych użytkownika" });
+        return res.status(400).json({ error: "Brak danych użytkownika" });
     }
 
     const result = await callPython({
         query_type: "fetch_profile",
-        user_id: user.id
+        clientid: user.clientid
     });
 
     res.status(result.status).json(result.data);
