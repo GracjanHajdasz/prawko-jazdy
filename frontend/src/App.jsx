@@ -4,6 +4,7 @@ import Login from "./components/login-page/Login.jsx";
 import Register from "./components/register-page/Register.jsx";
 import PopUp from "./components/pop-up/PopUp.jsx";
 import Scheduler from "./components/scheduler/Scheduler.jsx";
+import MainPage from "./components/main-page/MainPage.jsx";
 
 export default function App() {
   const [clientid, setClientid] = useState("");
@@ -14,7 +15,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <Scheduler setShowPopUp={setShowPopUp} setPopUpText={setPopUpText} />
+      <MainPage />
+      {/*<Scheduler setShowPopUp={setShowPopUp} setPopUpText={setPopUpText} />*/}
       {/*{hasAccount ? (
         <Login
           setHasAccount={setHasAccount}
