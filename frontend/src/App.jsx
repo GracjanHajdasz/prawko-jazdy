@@ -6,16 +6,16 @@ import PopUp from "./components/pop-up/PopUp.jsx";
 import Scheduler from "./components/scheduler/Scheduler.jsx";
 
 export default function App() {
-  // const [clientid, setClientid] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [showPopUp, setShowPopUp] = useState(false);
-  // const [popUpText, setPopUpText] = useState("");
-  // const [hasAccount, setHasAccount] = useState(true);
+  const [clientid, setClientid] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [popUpText, setPopUpText] = useState("");
+  const [hasAccount, setHasAccount] = useState(true);
 
   return (
     <div className="app">
-      <Scheduler />
-      {/* {hasAccount ? (
+      <Scheduler setShowPopUp={setShowPopUp} setPopUpText={setPopUpText} />
+      {/*{hasAccount ? (
         <Login
           setHasAccount={setHasAccount}
           clientid={clientid}
@@ -39,7 +39,7 @@ export default function App() {
           popUpText={popUpText}
           setPopUpText={setPopUpText}
         />
-      )}
+      )} */}
 
       {showPopUp && (
         <PopUp
@@ -48,7 +48,7 @@ export default function App() {
           show={showPopUp}
           setShowPopUp={setShowPopUp}
         />
-      )} */}
+      )}
     </div>
   );
 }
