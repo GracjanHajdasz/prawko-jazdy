@@ -1,4 +1,5 @@
-const { callPython } = require('../services/pythonService'); 
+const { callPython, parseError } = require('../services/pythonService'); 
+
 
 exports.register = async (req, res) => {
     try {
@@ -19,18 +20,13 @@ exports.register = async (req, res) => {
         });
 
         if (!result) {
-            throw new Error("Brak odpowiedzi podczas rejestracji użytkownika");
+            throw new Error("Brak odpowiedzi z bazy podczas rejestracji użytkownika");
         }
 
         res.status(result.status || 201).json({ msg: "Użytkownik zarejestrowany" });
 
     } catch (error) {
-        console.error("Błąd podczas próby rejestracji:", error.message);
-        
-        res.status(500).json({ 
-            error: "Wewnętrzny błąd serwera podczas rejestracji",
-            details: error.message 
-        });
+        parseError(error);
     }
 };
 
@@ -48,16 +44,12 @@ exports.login = async (req, res) => {
         });
 
         if (!result) {
-            throw new Error("Brak odpowiedzi podczas logowania użytkownika");
+            throw new Error("Brak odpowiedzi z bazy podczas logowania użytkownika");
         }
 
         res.status(result.status).json({msg: "Zalogowano pomyślnie"});
     } catch (error) {
-        console.error("Błąd podczas próby logowania:", error.message);
-        res.status(500).json({ 
-            error: "Wewnętrzny błąd serwera podczas logowania", 
-            details: error.message 
-        });
+        parseError(error);
     }
 };
 
@@ -72,6 +64,10 @@ exports.getUserData = async (req, res) => {
         query_type: "fetch_profile",
         clientid: user.clientid
     });
+
+    if (!result) {
+            throw new Error("Brak odpowiedzi z bazy podczas pobierania danych użytkownika");
+        }
 
     res.status(result.status).json(result.data);
 };
