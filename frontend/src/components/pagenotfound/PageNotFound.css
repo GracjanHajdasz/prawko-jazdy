@@ -1,0 +1,22 @@
+.pagenotfound-container {
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40vw;
+}
+
+.pagenotfound-container img {
+  width: 30vw;
+}
+
+.pagenotfound-container h1 {
+  color: rgb(255, 64, 64);
+}
+
+.pagenotfound-container p {
+  text-decoration: none;
+  font-size: larger;
+  margin-bottom: 4rem;
+}
