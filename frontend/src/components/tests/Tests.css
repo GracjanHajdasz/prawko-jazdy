@@ -21,8 +21,13 @@
   scrollbar-width: none;
 }
 
+.tests-container > :last-child {
+  align-items: center;
+}
+
 .tests-container img {
   width: 15vw;
+  margin-top: 5rem;
 }
 
 .tests-container section h2 {
