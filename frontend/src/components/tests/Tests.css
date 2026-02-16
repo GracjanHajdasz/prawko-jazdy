@@ -1,0 +1,34 @@
+.tests-container {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  border-radius: 20px;
+  width: 50vw;
+}
+
+.tests-container section {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tests-container > :first-child {
+  border-right: 2px solid black;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
+.tests-container img {
+  width: 15vw;
+}
+
+.tests-container section h2 {
+  border: none;
+}
+
+.tests-container section p {
+  text-decoration: none;
+}
