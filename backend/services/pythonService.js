@@ -1,8 +1,5 @@
-const axios = require('axios');
 require('dotenv').config();
-
-const PYTHON_URL = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
-const API_SECRET = process.env.INTERNAL_API_KEY || 'haslo';
+const axios = require('axios');
 
 function parseError(error) {
     if (error.code === 'ECONNREFUSED') {
@@ -41,8 +38,11 @@ exports.callPython = async (payload) => {
             dataToSend = { clientid: payload.user_id };
         }
         
-        const response = await axios.post(`${PYTHON_URL}${endpoint}`, dataToSend, {
-            timeout: 5000
+        const response = await axios.post(`${PYTHON_SERVICE_URL}${endpoint}`, dataToSend, {
+            timeout: 5000,
+            headers: {
+                'x-internal-secret': API_SECRET 
+            }
         });
 
         return { status: 200, data: response.data };

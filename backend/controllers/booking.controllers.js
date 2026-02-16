@@ -1,4 +1,4 @@
-const { callPython } = require('../services/pythonService'); 
+const { callPython, parseError } = require('../services/pythonService'); 
 const { isValid, parseISO, parse } = require('date-fns');
 
 const checkDate = (date) => {
@@ -6,7 +6,7 @@ const checkDate = (date) => {
     return isValid(parseISO(date_formatted));
 }
 
-exports.saveBooking = async (req, res) => {
+exports.editBookings = async (req, res) => {
     try {
         const { day, hour, status } = req.body;
 
@@ -15,54 +15,22 @@ exports.saveBooking = async (req, res) => {
         }
 
         const result = await callPython({
-            query_type: "save_booking",
+            query_type: "edit_bookings",
             day,
             hour
         });
 
         if (!result) {
-            throw new Error("Brak odpowiedzi podczas zapisywania rezerwacji");
+            throw new Error("Brak odpowiedzi z bazy podczas zapisywania rezerwacji");
         }
 
         res.status(result.status).json({ msg: "Rezerwacja zapisana" });
     } catch (error) {
-        console.error("Błąd podczas próby zapisywania rezerwacji:", error.message);
-        res.status(500).json({ 
-            error: "Wewnętrzny błąd serwera podczas zapisywania rezerwacji", 
-            details: error.message 
-        });
+        parseError(error);
     }
 };
 
-exports.cancelBooking = async (req, res) => {
-    try {
-        const { day, hour, status } = req.body;
-
-        if (!day || !hour || !status) {
-            return res.status(400).json({ error: "Brak wymaganych danych do anulowania rezerwacji" });
-        }
-
-        const result = await callPython({
-            query_type: "cancel_booking",
-            day,
-            hour
-        });
-
-        if (!result) {
-            throw new Error("Brak odpowiedzi podczas zapisywania rezerwacji");
-        }
-
-        res.status(result.status).json({ msg: "Rezerwacja anulowana" });
-
-    } catch (error) {
-        console.error("Błąd podczas próby anulowania rezerwacji:", error.message);
-        res.status(500).json({ 
-            error: "Wewnętrzny błąd serwera podczas anulowania rezerwacji", 
-            details: error.message 
-        });
-    }
-};
-
+//dostaje timestamp, zwraca wszystkie rezerwacje z tego dnia
 exports.getBookings = async (req, res) => {
     try {
         const { day } = req.body;
@@ -80,14 +48,13 @@ exports.getBookings = async (req, res) => {
             day
         });
 
+        if (!result) {
+            throw new Error("Brak odpowiedzi z bazy podczas pobierania danych");
+        }
+
         res.status(result.status).json(result.data);
         
-
     } catch (error) {
-        console.error("Błąd podczas próby pobierania rezerwacji:", error.message);
-        res.status(500).json({ 
-            error: "Wewnętrzny błąd serwera podczas pobierania rezerwacji", 
-            details: error.message 
-        });
+        parseError(error);
     }
 };
