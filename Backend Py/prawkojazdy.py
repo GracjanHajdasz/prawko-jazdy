@@ -67,5 +67,29 @@ async def login(data : dict):
             return {"Msg": "Logowanie pomyślne"}
      except Exception as e:
          return error_db(conn,e)
+@app.post("/editBookings")
+async def editBookings(data : dict):
+     tabela_dat = data["data"]
+     try:
+        with conn.cursor() as cur:
+            cur.execute("Update kalendarz Set zajete = TRUE where data = ANY(%s) and zajete = FALSE", (tabela_dat,))
+            updated_rows = cur.rowcount
+        conn.commit()
+        if updated_rows == len(tabela_dat):
+            return {"Msg": "Kursant zapisany"}
+        else:
+            return {"Msg" : "Godziny zajete"}
+     except Exception as e:
+        return error_db(conn, e)
+@app.post("/getBookings")
+async def getBookings(data:dict):
+    data_ = data["data"]
+    try:
+        with conn.cursor() as cur:
+            cur.execute("Select data, zajete From kalendarz where data::date = %s", (data_,))
+            rows = cur.fetchall()
+        return {"Msg": [{"data": dt.strftime("%Y-%m-%d %H:%M:%S"),"status": "available" if not zajete else "booked"}for dt, zajete in rows]}
+    except Exception as e:
+        error_db(conn, e)
 if __name__ == "__main__":
     uvicorn.run(app, host=HOST, port=PORT)
