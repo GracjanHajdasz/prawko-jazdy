@@ -11,11 +11,11 @@
 }
 
 .passed {
-  background-color: rgb(81, 255, 81);
+  background-color: rgb(125, 253, 125);
 }
 
 .failed {
-  background-color: rgb(255, 64, 64);
+  background-color: rgb(255, 103, 103);
 }
 
 .exam-block:hover {

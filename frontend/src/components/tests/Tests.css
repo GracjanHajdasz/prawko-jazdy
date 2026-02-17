@@ -16,7 +16,7 @@
 }
 
 .tests-container > :first-child {
-  border-right: 2px solid black;
+  border-right: 2px solid rgb(97, 97, 97);
   overflow: scroll;
   scrollbar-width: none;
 }

@@ -11,15 +11,15 @@ import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
 import Tests from "./components/tests/Tests.jsx";
 
 export default function App() {
-  const [clientid, setClientid] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPopUp, setShowPopUp] = useState(false);
-  const [popUpText, setPopUpText] = useState("");
-  const [hasAccount, setHasAccount] = useState(true);
+  // const [clientid, setClientid] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [showPopUp, setShowPopUp] = useState(false);
+  // const [popUpText, setPopUpText] = useState("");
+  // const [hasAccount, setHasAccount] = useState(true);
 
   return (
     <div className="app">
-      <MainPage />
+      <Tests />
       {/*<BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
