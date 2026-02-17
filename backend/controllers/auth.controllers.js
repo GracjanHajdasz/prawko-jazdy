@@ -2,55 +2,60 @@ const { callPython, parseError } = require('../services/pythonService');
 
 
 exports.register = async (req, res) => {
-    try {
-        const { clientid, password } = req.body;
+  try {
+    const { clientid, password } = req.body;
 
-        if (!clientid || !password) {
-            return res.status(400).json({ 
-                error: "Brak numeru użytkownika lub hasła" 
-            });
-        }
-
-        console.log(`Próba rejestracji użytkownika: ${clientid}`);
-
-        const result = await callPython({
-            query_type: "register",
-            clientid, 
-            password 
-        });
-
-        if (!result) {
-            throw new Error("Brak odpowiedzi z bazy podczas rejestracji użytkownika");
-        }
-
-        res.status(result.status || 201).json({ msg: "Użytkownik zarejestrowany" });
-
-    } catch (error) {
-        parseError(error);
+    if (!clientid || !password) {
+      return res.status(400).json({
+        error: "Brak numeru użytkownika lub hasła",
+      });
     }
+
+    console.log(`Próba rejestracji użytkownika: ${clientid}`);
+
+    const result = await callPython({
+      query_type: "register",
+      clientid,
+      password,
+    });
+
+    if (!result) {
+      throw new Error("Brak odpowiedzi z bazy podczas rejestracji użytkownika");
+    }
+
+    res.status(201).json({ msg: "Użytkownik zarejestrowany" });
+
+  } catch (error) {
+    const handledError = parseError(error);
+    res.status(handledError.status).json(handledError.data);
+  }
 };
 
 exports.login = async (req, res) => {
-    try {
-        const { clientid, password } = req.body;
-        if (!clientid || !password) {
-            return res.status(400).json({ error: "Brak numeru użytkownika lub hasła" });
-        }
-
-        const result = await callPython({
-            query_type: "login",
-            clientid, 
-            password
-        });
-
-        if (!result) {
-            throw new Error("Brak odpowiedzi z bazy podczas logowania użytkownika");
-        }
-
-        res.status(result.status).json({msg: "Zalogowano pomyślnie"});
-    } catch (error) {
-        parseError(error);
+  try {
+    const { clientid, password } = req.body;
+    if (!clientid || !password) {
+      return res
+        .status(400)
+        .json({ error: "Brak numeru użytkownika lub hasła" });
     }
+
+    const result = await callPython({
+      query_type: "login",
+      clientid,
+      password,
+    });
+
+    if (!result) {
+      throw new Error("Brak odpowiedzi z bazy podczas logowania użytkownika");
+    }
+
+    res.status(200).json({ msg: "Zalogowano pomyślnie" });
+
+  } catch (error) {
+    const handledError = parseError(error);
+    res.status(handledError.status).json(handledError.data);
+  }
 };
 
 exports.getUserData = async (req, res) => {

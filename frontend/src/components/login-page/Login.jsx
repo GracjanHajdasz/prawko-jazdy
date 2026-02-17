@@ -51,8 +51,8 @@ export default function Login({
     <div className="login-container">
       <h1>Zaloguj się</h1>
       <div className="input-container">
-        <input className="login-input" type="text" placeholder="Login" onChange={saveLogin} />
-        <input className="login-input" type="password" placeholder="Hasło" onChange={savePassword} />
+        <input className="stylized-input" type="text" placeholder="Login" onChange={saveLogin} />
+        <input className="stylized-input" type="password" placeholder="Hasło" onChange={savePassword} />
       </div>
       <Link to="/register" className="switch-login-register" onClick={() => setHasAccount(false)}>
         Nie posiadasz jeszcze konta?{" "}

@@ -6,10 +6,20 @@ function parseError(error) {
         console.error("Python service is not running..");
         return { status: 503, data: { error: "Service temporarily unavailable." } };
     }
+
     if (error.response) {
-        console.error("Error from Python service:", error.response.data);
-        return { status: error.response.status, data: error.response.data };
+        const responseData = error.response.data;
+        const responseStatus = error.response.status;
+
+        console.error("Response from Python service:", responseData);
+
+        if (responseData && responseData.msg === "Zalogowano pomyślnie") {
+            return { status: 200, data: responseData };
+        }
+
+        return { status: responseStatus, data: responseData };
     }
+
     console.error("Internal error:", error.message);
     return { status: 500, data: { error: "Internal server error." } };
 }
