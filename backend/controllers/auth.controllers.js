@@ -1,46 +1,78 @@
-const { callPython } = require('../services/pythonService'); 
+const { callPython, parseError } = require('../services/pythonService'); 
+
 
 exports.register = async (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: "Missing username or password" });
+  try {
+    const { clientid, password } = req.body;
+
+    if (!clientid || !password) {
+      return res.status(400).json({
+        error: "Brak numeru użytkownika lub hasła",
+      });
     }
 
+    console.log(`Próba rejestracji użytkownika: ${clientid}`);
+
     const result = await callPython({
-        query_type: "register",
-        username, 
-        password 
+      query_type: "register",
+      clientid,
+      password,
     });
 
-    res.status(result.status).json(result.data);
+    if (!result) {
+      throw new Error("Brak odpowiedzi z bazy podczas rejestracji użytkownika");
+    }
+
+    res.status(201).json({ msg: "Użytkownik zarejestrowany" });
+
+  } catch (error) {
+    const handledError = parseError(error);
+    res.status(handledError.status).json(handledError.data);
+  }
 };
 
 exports.login = async (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ error: "Missing username or password" });
+  try {
+    const { clientid, password } = req.body;
+    if (!clientid || !password) {
+      return res
+        .status(400)
+        .json({ error: "Brak numeru użytkownika lub hasła" });
     }
 
     const result = await callPython({
-        query_type: "login",
-        username, 
-        password
+      query_type: "login",
+      clientid,
+      password,
     });
 
-    res.status(result.status).json(result.data);
+    if (!result) {
+      throw new Error("Brak odpowiedzi z bazy podczas logowania użytkownika");
+    }
+
+    res.status(200).json({ msg: "Zalogowano pomyślnie" });
+
+  } catch (error) {
+    const handledError = parseError(error);
+    res.status(handledError.status).json(handledError.data);
+  }
 };
 
 exports.getUserData = async (req, res) => {
     const { user } = req.body;
     
     if (!user || !user.id) {
-        return res.status(400).json({ error: "Missing User ID"});
+        return res.status(400).json({ error: "Brak danych użytkownika" });
     }
 
     const result = await callPython({
         query_type: "fetch_profile",
-        user_id: user.id
+        clientid: user.clientid
     });
+
+    if (!result) {
+            throw new Error("Brak odpowiedzi z bazy podczas pobierania danych użytkownika");
+        }
 
     res.status(result.status).json(result.data);
 };

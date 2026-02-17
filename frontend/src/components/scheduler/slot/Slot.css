@@ -1,0 +1,68 @@
+.slot {
+  border: 0;
+  color: white;
+  background-color: rgb(113, 139, 255);
+  border-radius: 0.5em;
+  font-size: 1.15rem;
+  padding: 0.5rem;
+  font-weight: 600;
+  transition: 0.15s ease;
+  cursor: pointer;
+  box-shadow: 0px 4px 13px -2px rgba(66, 68, 90, 1);
+  min-width: 80%;
+  height: 5vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.active {
+  border: 0;
+  color: white;
+  background-color: rgb(40, 80, 255);
+  border-radius: 0.5em;
+  font-size: 1.15rem;
+  padding: 0.5rem;
+  font-weight: 600;
+  transition: 0.15s ease;
+  cursor: pointer;
+  box-shadow: 0px 4px 13px -2px rgba(66, 68, 90, 1);
+  min-width: 80%;
+  height: 5vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.slot:hover {
+  translate: 0 0.225em;
+}
+
+.slot:active {
+  translate: 0 0.4em;
+}
+
+.active:hover {
+  translate: 0 0.225em;
+}
+
+.active:active {
+  translate: 0 0.4em;
+}
+
+.slots-loading {
+  border: 0;
+  font-size: 1.15rem;
+  padding: 0.5rem;
+  font-weight: 600;
+  transition: 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

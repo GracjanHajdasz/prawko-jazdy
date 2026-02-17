@@ -1,21 +1,22 @@
-*{
-    font-family: inter;
+* {
+  font-family: inter;
 }
 
-html, body, #root {
-    height: 100%;
-    width: 100%;
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
 }
 body {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-image: url(./assets/background.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    /*background: #000000;
-    background: linear-gradient(117deg, rgba(0, 0, 0, 1) 0%, rgba(48, 48, 48, 1) 50%, rgba(64, 64, 64, 1) 100%);
-    */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)),
+    url(./assets/background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
