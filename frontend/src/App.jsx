@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-    <Navbar />
+      <Navbar />
       <div className="app">
         <Routes>
           {/* {{hasAccount ? ( */}
