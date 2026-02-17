@@ -19,7 +19,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Tests />
+      <MainPage />
       {/*<BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
