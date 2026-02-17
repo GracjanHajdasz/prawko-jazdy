@@ -59,3 +59,7 @@
   background: linear-gradient(135deg, #fb923c, #f97316);
   color: white;
 }
+
+.user-panel-btn {
+  text-align: center;
+}

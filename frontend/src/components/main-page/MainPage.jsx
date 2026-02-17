@@ -18,13 +18,25 @@ export default function MainPage() {
           <img src={calendarIcon} alt="calendarI icon" />
           <h2>Umów się na lekcję</h2>
           <p>Zarezerwuj termin jazdy z instruktorem</p>
-          <Link to="/scheduler" className="btn">Zapisz się</Link>
+          <Link to="/scheduler" className="btn">
+            Zapisz się
+          </Link>
         </section>
         <section>
           <img src={testsIcon} alt="tests icon" />
           <h2>Rozwiąż testy</h2>
           <p>Sprawdź swoją wiedzę rozwiązując testy</p>
-          <Link to="/tests" className="btn tests-btn">Rozwiąż testy</Link>
+          <Link to="/tests" className="btn tests-btn">
+            Rozwiąż testy
+          </Link>
+        </section>
+        <section>
+          <h2>Panel użytkownika</h2>
+          <p>Zarządzaj </p>
+          <Link to="/user-panel" className="btn user-panel-btn">
+            Przejdź do panelu <br />
+            użytkownika
+          </Link>
         </section>
       </main>
     </div>

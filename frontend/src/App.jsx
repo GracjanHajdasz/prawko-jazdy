@@ -9,6 +9,7 @@ import MainPage from "./components/main-page/MainPage.jsx";
 import Tests from "./components/tests/Tests.jsx";
 import Exam from "./components/exam/Exam.jsx";
 import Footer from "./components/footer/Footer.jsx";
+import UserPanel from "./components/user-panel/UserPanel.jsx";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export default function App() {
@@ -69,6 +70,7 @@ export default function App() {
           />
           <Route path="/tests" element={<Tests />} />
           <Route path="/exam" element={<Exam />} />
+          <Route path="/user-panel" element={<UserPanel />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

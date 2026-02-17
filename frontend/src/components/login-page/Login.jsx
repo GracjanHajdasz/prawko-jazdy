@@ -1,6 +1,7 @@
 import "./Login.css";
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Login({
   setHasAccount,
@@ -53,8 +54,12 @@ export default function Login({
         <input type="text" placeholder="Login" onChange={saveLogin} />
         <input type="password" placeholder="Hasło" onChange={savePassword} />
       </div>
-      <p onClick={() => setHasAccount(false)}>Nie posiadasz jeszcze konta?</p>
-      <button className="btn" onClick={() => checkIfEmpty()}>Zaloguj</button>
+      <Link className="has-account" onClick={() => setHasAccount(false)}>
+        Nie posiadasz jeszcze konta?{" "}
+      </Link>
+      <button className="btn" onClick={() => checkIfEmpty()}>
+        Zaloguj
+      </button>
     </div>
   );
 }
