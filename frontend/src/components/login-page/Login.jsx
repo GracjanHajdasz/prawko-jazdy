@@ -54,7 +54,7 @@ export default function Login({
         <input type="password" placeholder="Hasło" onChange={savePassword} />
       </div>
       <p onClick={() => setHasAccount(false)}>Nie posiadasz jeszcze konta?</p>
-      <button onClick={() => checkIfEmpty()}>Zaloguj</button>
+      <button className="btn" onClick={() => checkIfEmpty()}>Zaloguj</button>
     </div>
   );
 }

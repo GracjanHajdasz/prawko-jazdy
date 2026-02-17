@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Tests.css";
 import testsIcon from "../../assets/tests.png";
 import ExamBlock from "./exam-block/ExamBlock";
+import { Link } from "react-router-dom";
 
 const fetchMockExams = async () => {
   return new Promise((resolve) => {
@@ -70,7 +71,7 @@ export default function Tests() {
   return (
     <div className="tests-container">
       <section>
-        {isLoading && <p>Ładowanie...</p>}
+        {isLoading && <p>Ładowanie wyników...</p>}
         {error && <p className="error">{error}</p>}
         {exams.map((exam, index) => (
           <ExamBlock
@@ -83,7 +84,7 @@ export default function Tests() {
       <section>
         <img src={testsIcon} alt="tests icon" />
         <h2>Rozpocznij próbny egzamin</h2>
-        <button className="tests-btn">Rozpocznij</button>
+        <Link to="/exam" className="btn tests-btn">Rozpocznij</Link>
       </section>
     </div>
   );

@@ -1,6 +1,7 @@
 import "./MainPage.css";
 import calendarIcon from "../../assets/calendar.png";
 import testsIcon from "../../assets/tests.png";
+import { Link } from "react-router-dom";
 
 export default function MainPage() {
   return (
@@ -17,13 +18,13 @@ export default function MainPage() {
           <img src={calendarIcon} alt="calendarI icon" />
           <h2>Umów się na lekcję</h2>
           <p>Zarezerwuj termin jazdy z instruktorem</p>
-          <button>Zapisz się</button>
+          <Link to="/scheduler" className="btn">Zapisz się</Link>
         </section>
         <section>
           <img src={testsIcon} alt="tests icon" />
           <h2>Rozwiąż testy</h2>
           <p>Sprawdź swoją wiedzę rozwiązując testy</p>
-          <button className="tests-btn">Rozwiąż testy</button>
+          <Link to="/tests" className="btn tests-btn">Rozwiąż testy</Link>
         </section>
       </main>
     </div>

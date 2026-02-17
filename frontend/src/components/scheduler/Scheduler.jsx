@@ -101,7 +101,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
         />
       </header>
       <main>
-        {isLoading && <p>Ładowanie...</p>}
+        {isLoading && <p className="slots-loading">Ładowanie dostępnych godzin...</p>}
         {error && <p className="error-msg">{error}</p>}
         {!isLoading && !error && (
           <div className="slots-container">

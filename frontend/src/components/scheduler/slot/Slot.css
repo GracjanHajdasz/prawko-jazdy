@@ -53,3 +53,16 @@
 .active:active {
   translate: 0 0.4em;
 }
+
+.slots-loading {
+  border: 0;
+  font-size: 1.15rem;
+  padding: 0.5rem;
+  font-weight: 600;
+  transition: 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
