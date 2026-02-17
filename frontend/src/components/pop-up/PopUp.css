@@ -9,7 +9,7 @@
     animation: slideDown 0.3s ease-out;
 }
 
-h2{
+.popup-heading {
     border-bottom: black solid 2px;
     padding-left: 1vw;
 }

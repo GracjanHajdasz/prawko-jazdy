@@ -1,6 +1,7 @@
 import "./Register.css";
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Login({
   setHasAccount,
@@ -55,7 +56,7 @@ export default function Login({
         <input type="text" placeholder="Login" onChange={saveLogin} />
         <input type="password" placeholder="Hasło" onChange={savePassword} />
       </div>
-      <Link className="has-account" onClick={() => setHasAccount(true)}>
+      <Link to="/login" className="switch-login-register" onClick={() => setHasAccount(true)}>
         Posiadasz już konto?
       </Link>
       <button className="btn" onClick={() => checkIfEmpty()}>

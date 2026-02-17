@@ -10,6 +10,7 @@ import Tests from "./components/tests/Tests.jsx";
 import Exam from "./components/exam/Exam.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import UserPanel from "./components/user-panel/UserPanel.jsx";
+import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export default function App() {
@@ -60,7 +61,7 @@ export default function App() {
           />
           <Route path="/" element={<MainPage />} />
           <Route
-            path="/scheduler"
+            path="/harmonogram"
             element={
               <Scheduler
                 setShowPopUp={setShowPopUp}
@@ -68,11 +69,11 @@ export default function App() {
               />
             }
           />
-          <Route path="/tests" element={<Tests />} />
-          <Route path="/exam" element={<Exam />} />
-          <Route path="/user-panel" element={<UserPanel />} />
+          <Route path="/testy" element={<Tests />} />
+          <Route path="/egzamin" element={<Exam />} />
+          <Route path="/panel-uzytkownika" element={<UserPanel />} />
 
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
         {showPopUp && (
           <PopUp

@@ -32,7 +32,7 @@ export default function PopUp({ popUpText, show, duration, setShowPopUp }) {
   if (!isVisible) return null;
   return (
     <div className={`popup ${isClosing ? "closing" : ""}`}>
-      <h2>Komunikat</h2>
+      <h2 className="popup-heading">Komunikat</h2>
       <p>{popUpText}</p>
     </div>
   );

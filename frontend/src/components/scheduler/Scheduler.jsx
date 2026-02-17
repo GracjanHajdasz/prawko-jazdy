@@ -94,6 +94,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
         <h2>Harmonogram</h2>
         <label htmlFor="date-picker">Wybierz datę: </label>
         <input
+        className="stylized-input"
           id="date-picker"
           type="date"
           value={date}

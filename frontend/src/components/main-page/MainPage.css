@@ -10,18 +10,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: black;
 }
 
 .main-page-container header h1 {
   font-size: 4rem;
-  margin-bottom: 0;
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
 }
 
 .main-page-container header h2 {
   text-align: center;
   text-decoration: none;
   border: none;
+  margin-bottom: 4vh;
 }
 
 .main-page-container main {
@@ -61,5 +63,13 @@
 }
 
 .user-panel-btn {
+  text-align: center;
+}
+
+.main-p-section h2, .main-p-section p {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
 }

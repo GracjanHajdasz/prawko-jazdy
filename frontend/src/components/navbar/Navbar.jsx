@@ -12,19 +12,20 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">
-          <span className="logo-icon">LOGO</span> Szkoła Jazdy
-        </Link>
+        <Link to="/">Szkoła Jazdy</Link>
       </div>
       <ul className="navbar-links">
         <li>
-          <Link to="/">Pulpit</Link>
+          <Link to="/">Strona główna</Link>
         </li>
         <li>
-          <Link to="/scheduler">Jazdy</Link>
+          <Link to="/harmonogram">Jazdy</Link>
         </li>
         <li>
-          <Link to="/tests">Testy</Link>
+          <Link to="/testy">Testy</Link>
+        </li>
+        <li>
+          <Link to="/panel-uzytkownika">Panel użytkownika</Link>
         </li>
       </ul>
       <div className="navbar-actions">

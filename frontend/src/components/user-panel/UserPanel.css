@@ -1,0 +1,248 @@
+.panel-container {
+  display: flex;
+  min-height: 92vh;
+  width: 100vw;
+  background-color: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+}
+
+.panel-sidebar {
+  width: 280px;
+  background-color: white;
+  padding: 30px 20px;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.user-brief {
+  text-align: center;
+}
+
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px auto;
+}
+
+.user-brief h3 {
+  margin: 0;
+  color: #1f2937;
+}
+
+.user-brief p {
+  margin: 5px 0 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.panel-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel-nav button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 15px;
+  font-size: 1rem;
+  color: #4b5563;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.panel-nav button:hover {
+  background-color: #f3f4f6;
+  color: #2563eb;
+}
+
+.panel-nav button.active {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.panel-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)),
+    url(../../assets/background.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.panel-content h2 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #111827;
+  font-size: 1.8rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card h3 {
+  margin: 0 0 15px 0;
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.big-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #2563eb;
+  transition: width 0.5s ease;
+}
+
+.highlight-text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin: 0;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ride-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  border-left: 5px solid transparent;
+}
+
+.ride-card.upcoming {
+  border-left-color: #2563eb;
+}
+
+.ride-card.completed {
+  border-left-color: #9ca3af;
+  opacity: 0.8;
+}
+
+.ride-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 20px;
+  border-right: 1px solid #e5e7eb;
+  margin-right: 20px;
+  min-width: 60px;
+}
+
+.date-day {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.date-month {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.ride-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+}
+
+.ride-info p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.ride-status {
+  margin-left: auto;
+}
+
+.tag {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tag.blue {
+    background-color: #eff6ff; color: #2563eb; 
+}
+
+.tag.gray { 
+    background-color: #f3f4f6; color: #4b5563; 
+}
+
+.profile-form {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  color: #6b7280;
+}

@@ -1,41 +1,41 @@
 import "./MainPage.css";
 import calendarIcon from "../../assets/calendar.png";
 import testsIcon from "../../assets/tests.png";
+import placeholder from "../../assets/placeholder.png";
 import { Link } from "react-router-dom";
 
 export default function MainPage() {
   return (
     <div className="main-page-container">
       <header>
-        <h1>Witaj w systemie szkoly jazdy!</h1>
+        <h1>Twój kurs prawa jazdy w jednym miejscu</h1>
         <h2>
-          Wybierz jedną z opcji poniżej żeby zapisać się na lekcje lub <br />
-          przetestować swoją wiedzę.
+          Zarządzaj jazdami, ucz się do egzaminu oraz śledź swoje postępy szybko i wygodnie.
         </h2>
       </header>
       <main>
-        <section>
-          <img src={calendarIcon} alt="calendarI icon" />
+        <section className="main-p-section">
+          <img src={placeholder} alt="calendar icon" />
           <h2>Umów się na lekcję</h2>
-          <p>Zarezerwuj termin jazdy z instruktorem</p>
-          <Link to="/scheduler" className="btn">
-            Zapisz się
+          <p>Wybierz instruktora i zarezerwuj dogodny termin w kalendarzu.</p>
+          <Link to="/harmonogram" className="btn">
+            Umów jazdę
           </Link>
         </section>
-        <section>
-          <img src={testsIcon} alt="tests icon" />
-          <h2>Rozwiąż testy</h2>
-          <p>Sprawdź swoją wiedzę rozwiązując testy</p>
-          <Link to="/tests" className="btn tests-btn">
-            Rozwiąż testy
+        <section className="main-p-section">
+          <img src={placeholder} alt="tests icon" />
+          <h2>Baza Pytań i Testy</h2>
+          <p>Przygotuj się do egzaminu teoretycznego rozwiązując oficjalne zestawy.</p>
+          <Link to="/testy" className="btn tests-btn">
+            Rozpocznij naukę
           </Link>
         </section>
-        <section>
-          <h2>Panel użytkownika</h2>
-          <p>Zarządzaj </p>
-          <Link to="/user-panel" className="btn user-panel-btn">
-            Przejdź do panelu <br />
-            użytkownika
+        <section className="main-p-section">
+          <img src={placeholder} alt="user panel icon" />
+          <h2>Twój Profil</h2>
+          <p>Sprawdź liczbę wyjeżdżonych godzin, statystyki i swoje dane.</p>
+          <Link to="/panel-uzytkownika" className="btn user-panel-btn">
+            Zobacz postępy
           </Link>
         </section>
       </main>

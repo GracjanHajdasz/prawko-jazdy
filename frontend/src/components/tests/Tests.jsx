@@ -71,7 +71,7 @@ export default function Tests() {
   return (
     <div className="tests-container">
       <section>
-        {isLoading && <p>Ładowanie wyników...</p>}
+        {isLoading && <p className="slots-loading">Ładowanie wyników...</p>}
         {error && <p className="error">{error}</p>}
         {exams.map((exam, index) => (
           <ExamBlock
@@ -84,7 +84,7 @@ export default function Tests() {
       <section>
         <img src={testsIcon} alt="tests icon" />
         <h2>Rozpocznij próbny egzamin</h2>
-        <Link to="/exam" className="btn tests-btn">Rozpocznij</Link>
+        <Link to="/egzamin" className="btn tests-btn">Rozpocznij</Link>
       </section>
     </div>
   );
