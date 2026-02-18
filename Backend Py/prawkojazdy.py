@@ -74,10 +74,11 @@ async def editBookings(data : dict):
         with conn.cursor() as cur:
             cur.execute("Update kalendarz Set zajete = TRUE where data = ANY(%s) and zajete = FALSE", (tabela_dat,))
             updated_rows = cur.rowcount
-        conn.commit()
         if updated_rows == len(tabela_dat):
+            conn.commit()
             return {"Msg": "Kursant zapisany"}
         else:
+            conn.rollback()
             return {"Msg" : "Godziny zajete"}
      except Exception as e:
         return error_db(conn, e)
