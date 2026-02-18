@@ -1,60 +1,75 @@
-const { callPython, parseError } = require('../services/pythonService'); 
-const { isValid, parseISO, parse } = require('date-fns');
+const { callPython } = require('../services/pythonService'); 
+const { isValid, parseISO } = require('date-fns');
 
 const checkDate = (date) => {
-    date_formatted = parse(date, 'dd-MM-yyyy', new Date());
-    return isValid(parseISO(date_formatted));
+    if (typeof date !== 'string') {
+        return false;
+    }
+    const parsed = parseISO(date);
+    return isValid(parsed);
 }
 
 exports.editBookings = async (req, res) => {
     try {
-        const { day, hour, status } = req.body;
+        const { data } = req.body;
 
-        if (!day || !hour || !status) {
+        if (!data) {
             return res.status(400).json({ error: "Brak wymaganych danych rezerwacji" });
         }
 
         const result = await callPython({
             query_type: "edit_bookings",
-            day,
-            hour
+            data: data
         });
 
         if (!result) {
             throw new Error("Brak odpowiedzi z bazy podczas zapisywania rezerwacji");
         }
 
-        res.status(result.status).json({ msg: "Rezerwacja zapisana" });
+        res.status(result.status).json({ msg: result.data.msg });
     } catch (error) {
         parseError(error);
     }
 };
 
-//dostaje timestamp, zwraca wszystkie rezerwacje z tego dnia
 exports.getBookings = async (req, res) => {
     try {
-        const { day } = req.body;
+        const { data } = req.body;
 
-        if (!day) {
-            return res.status(400).json({ error: "Brak danych rezerwacji w wybranym dniu" });
+        console.log("--- getBookings REQUEST ---");
+        console.log("Payload:", req.body);
+        console.log("Data (typ):", typeof data, "| Wartość:", data);
+
+        if (!data) {
+            return res.status(400).json({ error: "Brak danych rezerwacji (oczekiwany klucz 'data')" });
         }
 
-        if (!checkDate(day)) {
-            return res.status(400).json({ error: "Nieprawidłowy format daty" });
+        if (!checkDate(data)) {
+            return res.status(400).json({ 
+                error: "Nieprawidłowy format daty. Oczekiwany format: YYYY-MM-DD (string)",
+                received: data 
+            });
         }
 
         const result = await callPython({
             query_type: "fetch_bookings",
-            day
+            data: data 
         });
 
         if (!result) {
-            throw new Error("Brak odpowiedzi z bazy podczas pobierania danych");
+            throw new Error("Brak odpowiedzi z serwisu Python (baza danych)");
         }
 
-        res.status(result.status).json(result.data);
+        return res.status(result.status || 200).json(result.data);
         
     } catch (error) {
-        parseError(error);
+        console.error("Błąd krytyczny w getBookings:", error);
+        
+        if (!res.headersSent) {
+            return res.status(500).json({ 
+                error: "Wystąpił błąd serwera podczas pobierania rezerwacji",
+                details: error.message 
+            });
+        }
     }
 };

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const axios = require('axios');
 
-function parseError(error) {
+exports.parseError = (error) => {
     if (error.code === 'ECONNREFUSED') {
         console.error("Python service is not running..");
         return { status: 503, data: { error: "Service temporarily unavailable." } };
@@ -45,13 +45,21 @@ exports.callPython = async (payload) => {
         }
         else if (payload.query_type === "fetch_profile") {
             endpoint = "/get-profile"; 
-            dataToSend = { clientid: payload.user_id };
+            dataToSend = { clientid: payload.clientid };
+        }
+        else if (payload.query_type === "fetch_bookings") {
+            endpoint = "/getBookings"; 
+            dataToSend = { data: payload.data };
+        }
+        else if (payload.query_type === "edit_bookings") {
+            endpoint = "/editBookings"; 
+            dataToSend = { data: payload.data };
         }
         
-        const response = await axios.post(`${PYTHON_SERVICE_URL}${endpoint}`, dataToSend, {
+        const response = await axios.post(`${process.env.PYTHON_SERVICE_URL}${endpoint}`, dataToSend, {
             timeout: 5000,
             headers: {
-                'x-internal-secret': API_SECRET 
+                'x-internal-secret': process.env.API_SECRET 
             }
         });
 
@@ -63,6 +71,6 @@ exports.callPython = async (payload) => {
         } else if (error.code === 'ECONNREFUSED') {
             return { status: 503, data: { error: "Python service is offline" } };
         }
-        return { status: 500, data: { error: "Internal Node Error" } };
+        return { status: 500, data: { error: "Internal node error: " + error.message } };
     }
 };
