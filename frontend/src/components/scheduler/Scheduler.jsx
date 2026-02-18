@@ -3,29 +3,6 @@ import "./Scheduler.css";
 import Slot from "./slot/Slot.jsx";
 import Confirmation from "./confirmation/Confirmation.jsx";
 
-const fetchMockSlots = async (date) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (!date) return resolve([]);
-      resolve([
-        { time: "08:00", status: "available" },
-        { time: "09:00", status: "available" },
-        { time: "10:00", status: "available" },
-        { time: "11:00", status: "available" },
-        { time: "12:00", status: "available" },
-        { time: "13:00", status: "available" },
-        { time: "14:00", status: "available" },
-        { time: "15:00", status: "available" },
-        { time: "16:00", status: "available" },
-        { time: "17:00", status: "available" },
-        { time: "18:00", status: "available" },
-        { time: "19:00", status: "available" },
-        { time: "20:00", status: "available" },
-      ]);
-    }, 800);
-  });
-};
-
 export default function Scheduler({ setShowPopUp, setPopUpText }) {
   const [slots, setSlots] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -34,33 +11,62 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
   const [error, setError] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // Pokaż confirmation gdy są sloty
   useEffect(() => {
     if (selectedSlots.length > 0) {
       setShowConfirmation(true);
     } else {
-      // Czekaj na koniec animacji przed ukryciem
       setTimeout(() => setShowConfirmation(false), 300);
     }
   }, [selectedSlots]);
 
   useEffect(() => {
     if (!date) return;
+    
     let isMounted = true;
     setIsLoading(true);
     setError(null);
     setSelectedSlots([]);
 
-    fetchMockSlots(date)
-      .then((data) => {
-        if (isMounted) setSlots(data);
-      })
-      .catch(() => {
-        if (isMounted) setError("Błąd pobierania danych.");
-      })
-      .finally(() => {
+    const fetchSlots = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/bookings/getBookings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: date }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Błąd połączenia z serwerem');
+        }
+
+        const result = await response.json();
+        
+        const rawData = result.Msg || result.data || [];
+
+        const processedSlots = rawData.map(item => {
+          const timeOnly = item.data.split(' ')[1].substring(0, 5);
+          return {
+            time: timeOnly,
+            status: item.status,
+            fullDate: item.data 
+          };
+        }).sort((a, b) => a.time.localeCompare(b.time));
+
+        if (isMounted) {
+          setSlots(processedSlots);
+        }
+
+      } catch (err) {
+        console.error(err);
+        if (isMounted) setError("Nie udało się pobrać harmonogramu.");
+      } finally {
         if (isMounted) setIsLoading(false);
-      });
+      }
+    };
+
+    fetchSlots();
 
     return () => {
       isMounted = false;
@@ -68,7 +74,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
   }, [date]);
 
   useEffect(() => {
-    console.log(selectedSlots);
+    console.log("Wybrane godziny:", selectedSlots);
   }, [selectedSlots]);
 
   const handleSlotToggle = (time) => {

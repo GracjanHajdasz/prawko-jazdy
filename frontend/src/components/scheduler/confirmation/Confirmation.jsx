@@ -9,16 +9,17 @@ export default function Confirmation({ selectedSlots, setSelectedSlots }) {
     if (selectedSlots.length > 0) {
       setDisplaySlots(selectedSlots);
       setIsHiding(false);
-    } else if (selectedSlots.length === 0 && !isHiding) {
+    }
+    else if (selectedSlots.length === 0 && !isHiding) {
       setIsHiding(true);
     }
-  }, [selectedSlots, isHiding]);
+  }, [selectedSlots]); 
 
   function cancelSlots() {
     setIsHiding(true);
+    setSelectedSlots([]); 
     setTimeout(() => {
-      setSelectedSlots([]);
-      setIsHiding(false);
+      setDisplaySlots([]);  
     }, 300);
   }
 
