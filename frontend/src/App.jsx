@@ -1,5 +1,8 @@
 import "./App.css";
 import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Komponenty
 import Navbar from "./components/navbar/Navbar.jsx";
 import Login from "./components/login-page/Login.jsx";
 import Register from "./components/register-page/Register.jsx";
@@ -11,70 +14,42 @@ import Exam from "./components/exam/Exam.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import UserPanel from "./components/user-panel/UserPanel.jsx";
 import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export default function App() {
-  const [clientid, setClientid] = useState("");
-  const [password, setPassword] = useState("");
   const [showPopUp, setShowPopUp] = useState(false);
   const [popUpText, setPopUpText] = useState("");
-  const [hasAccount, setHasAccount] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const triggerPopUp = (text) => {
+    setPopUpText(text);
+    setShowPopUp(true);
+  };
 
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      
       <div className="app">
-        <Routes>
-          {/* {{hasAccount ? ( */}
-          <Route
-            path="/login"
-            element={
-              <Login
-                setHasAccount={setHasAccount}
-                clientid={clientid}
-                setClientid={setClientid}
-                password={password}
-                setPassword={setPassword}
-                showPopUp={showPopUp}
-                setShowPopUp={setShowPopUp}
-                popUpText={popUpText}
-                setPopUpText={setPopUpText}
-              />
-            }
-          />
-          {/* ) : ( */}
-          <Route
-            path="/register"
-            element={
-              <Register
-                setHasAccount={setHasAccount}
-                clientid={clientid}
-                setClientid={setClientid}
-                password={password}
-                setPassword={setPassword}
-                showPopUp={showPopUp}
-                setShowPopUp={setShowPopUp}
-                popUpText={popUpText}
-                setPopUpText={setPopUpText}
-              />
-            }
-          />
-          <Route path="/" element={<MainPage />} />
-          <Route
-            path="/harmonogram"
-            element={
-              <Scheduler
-                setShowPopUp={setShowPopUp}
-                setPopUpText={setPopUpText}
-              />
-            }
-          />
-          <Route path="/testy" element={<Tests />} />
-          <Route path="/egzamin" element={<Exam />} />
-          <Route path="/panel-uzytkownika" element={<UserPanel />} />
+        {!isLoggedIn ? (
+          <Routes>
+            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} triggerPopUp={triggerPopUp} />} />
+            <Route path="/register" element={<Register triggerPopUp={triggerPopUp} />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        ) : (
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/harmonogram" element={<Scheduler triggerPopUp={triggerPopUp} />} />
+            <Route path="/testy" element={<Tests />} />
+            <Route path="/egzamin" element={<Exam />} />
+            <Route path="/panel-uzytkownika" element={<UserPanel />} />
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="/register" element={<Navigate to="/" replace />} />
+            
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        )}
 
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
         {showPopUp && (
           <PopUp
             popUpText={popUpText}

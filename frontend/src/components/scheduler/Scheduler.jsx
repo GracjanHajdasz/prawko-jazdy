@@ -3,7 +3,7 @@ import "./Scheduler.css";
 import Slot from "./slot/Slot.jsx";
 import Confirmation from "./confirmation/Confirmation.jsx";
 
-export default function Scheduler({ setShowPopUp, setPopUpText }) {
+export default function Scheduler({ triggerPopUp }) {
   const [slots, setSlots] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [selectedSlots, setSelectedSlots] = useState([]);
@@ -23,11 +23,12 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify({ data: date }),
       });
 
       if (!response.ok) {
-        throw new Error('Błąd połączenia z serwerem');
+        throw new Error('Błąd połączenia z serwerem lub brak uprawnień');
       }
 
       const result = await response.json();
@@ -46,7 +47,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
 
     } catch (err) {
       console.error(err);
-      setError("Nie udało się pobrać harmonogramu.");
+      setError("Nie udało się pobrać harmonogramu. Zaloguj się ponownie.");
     } finally {
       setIsLoading(false);
     }
@@ -67,10 +68,6 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
     return () => clearTimeout(timer); 
   }, [selectedSlots]);
 
-  useEffect(() => {
-    console.log("Wybrane godziny:", selectedSlots);
-  }, [selectedSlots]);
-
   const handleSlotToggle = (time) => {
     setSelectedSlots((prevSlots) => {
       let newSlots;
@@ -78,8 +75,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
         newSlots = prevSlots.filter((t) => t !== time);
       } else {
         if (prevSlots.length >= 4) {
-          setPopUpText("Maksymalnie możesz wybrać 4 godziny w ciągu dnia");
-          setShowPopUp(true);
+          triggerPopUp("Maksymalnie możesz wybrać 4 godziny w ciągu dnia");
           return prevSlots;
         }
         newSlots = [...prevSlots, time];
@@ -91,25 +87,24 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
   const handleBooking = async () => {
     const formattedData = selectedSlots.map(time => `${date} ${time}:00`);
 
-    setSelectedSlots([]); 
-
     try {
       const response = await fetch("http://localhost:5000/api/bookings/editBookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include', 
         body: JSON.stringify({ data: formattedData }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Błąd podczas zapisywania rezerwacji");
+        throw new Error(result.error || "Błąd podczas zapisywania rezerwacji");
       }
 
-      const result = await response.json();
-      
-      setPopUpText(result.msg || "Rezerwacja zakończona sukcesem");
-      setShowPopUp(true);
+      setSelectedSlots([]); 
+      triggerPopUp(result.msg || "Rezerwacja zakończona sukcesem");
 
       setTimeout(() => {
         fetchSlots(); 
@@ -117,8 +112,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
 
     } catch (error) {
       console.error(error);
-      setPopUpText("Wystąpił błąd podczas rezerwacji.");
-      setShowPopUp(true);
+      triggerPopUp(error.message || "Wystąpił błąd podczas rezerwacji.");
     }
   };
 
@@ -128,7 +122,7 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
         <h2>Harmonogram</h2>
         <label htmlFor="date-picker">Wybierz datę: </label>
         <input
-        className="stylized-input"
+          className="stylized-input"
           id="date-picker"
           type="date"
           value={date}
@@ -140,17 +134,21 @@ export default function Scheduler({ setShowPopUp, setPopUpText }) {
         {error && <p className="error-msg">{error}</p>}
         {!isLoading && !error && (
           <div className="slots-container">
-            {slots.map((slot) => {
-              if (slot.status !== "available") return null;
-              return (
-                <Slot
-                  key={slot.time}
-                  time={slot.time}
-                  isSelected={selectedSlots.includes(slot.time)}
-                  onSelect={handleSlotToggle}
-                />
-              );
-            })}
+            {slots.length > 0 ? (
+              slots.map((slot) => {
+                if (slot.status !== "available") return null;
+                return (
+                  <Slot
+                    key={slot.time}
+                    time={slot.time}
+                    isSelected={selectedSlots.includes(slot.time)}
+                    onSelect={handleSlotToggle}
+                  />
+                );
+              })
+            ) : (
+              <p>Brak dostępnych godzin w wybranym dniu.</p>
+            )}
           </div>
         )}
       </main>
