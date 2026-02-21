@@ -1,5 +1,4 @@
-const { callPython, parseError } = require('../services/pythonService'); 
-
+const { callPython, parseError } = require('../services/python.service'); 
 
 exports.register = async (req, res) => {
   try {
@@ -31,9 +30,12 @@ exports.register = async (req, res) => {
   }
 };
 
+const { generateToken } = require('../services/token.service');
+
 exports.login = async (req, res) => {
   try {
     const { clientid, password } = req.body;
+    
     if (!clientid || !password) {
       return res
         .status(400)
@@ -50,7 +52,16 @@ exports.login = async (req, res) => {
       throw new Error("Brak odpowiedzi z bazy podczas logowania użytkownika");
     }
 
-    res.status(200).json({ msg: "Zalogowano pomyślnie" });
+    const payload = { 
+        clientid: clientid,
+    };
+
+    const accessToken = generateToken(payload, '7d');
+
+    res.status(200).json({ 
+        msg: "Zalogowano pomyślnie",
+        token: accessToken
+    });
 
   } catch (error) {
     const handledError = parseError(error);
