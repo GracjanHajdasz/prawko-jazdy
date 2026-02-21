@@ -1,4 +1,5 @@
 const { callPython, parseError } = require('../services/python.service'); 
+const { generateToken } = require('../services/token.service');
 
 exports.register = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ exports.register = async (req, res) => {
     });
 
     if (!result) {
-      throw new Error("Brak odpowiedzi z bazy podczas rejestracji użytkownika");
+      throw new Error("Brak prawidłowej odpowiedzi z bazy podczas rejestracji użytkownika");
     }
 
     res.status(201).json({ msg: "Użytkownik zarejestrowany" });
@@ -29,8 +30,6 @@ exports.register = async (req, res) => {
     res.status(handledError.status).json(handledError.data);
   }
 };
-
-const { generateToken } = require('../services/token.service');
 
 exports.login = async (req, res) => {
   try {
@@ -48,24 +47,33 @@ exports.login = async (req, res) => {
       password,
     });
 
-    if (!result) {
-      throw new Error("Brak odpowiedzi z bazy podczas logowania użytkownika");
+    if (!result || !result.data || !result.data.Msg) {
+      throw new Error("Brak prawidłowej odpowiedzi z bazy podczas logowania");
     }
 
-    const payload = { 
-        clientid: clientid,
-    };
+    if (result.data.Msg !== 'Logowanie pomyślne') {
+      return res
+        .status(401)
+        .json({ error: result.data.Msg });
+    }
 
+    const payload = { clientid: clientid };
     const accessToken = generateToken(payload, '7d');
 
+    res.cookie('authToken', accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     res.status(200).json({ 
-        msg: "Zalogowano pomyślnie",
-        token: accessToken
+        msg: "Zalogowano pomyślnie"
     });
 
   } catch (error) {
     const handledError = parseError(error);
-    res.status(handledError.status).json(handledError.data);
+    res.status(handledError.status || 500).json(handledError.data || { error: "Błąd serwera" });
   }
 };
 
@@ -82,7 +90,7 @@ exports.getUserData = async (req, res) => {
     });
 
     if (!result) {
-            throw new Error("Brak odpowiedzi z bazy podczas pobierania danych użytkownika");
+            throw new Error("Brak prawidłowejodpowiedzi z bazy podczas pobierania danych użytkownika");
         }
 
     res.status(result.status).json(result.data);
