@@ -1,5 +1,6 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Komponenty
@@ -19,11 +20,31 @@ export default function App() {
   const [showPopUp, setShowPopUp] = useState(false);
   const [popUpText, setPopUpText] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const triggerPopUp = (text) => {
     setPopUpText(text);
     setShowPopUp(true);
   };
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        await axios.get("http://localhost:5000/api/auth/verify", { 
+          withCredentials: true 
+        });
+        setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+  }, []);
+
+  if (loading) return <div>Ładowanie...</div>;
 
   return (
     <BrowserRouter>
