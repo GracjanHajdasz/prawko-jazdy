@@ -8,14 +8,14 @@ export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        "http://localhost:5000/api/auth/logout", 
         {},
-        { withCredentials: true },
+        { withCredentials: true }
       );
 
       setIsLoggedIn(false);
-
-      navigate("/");
+      navigate("/"); 
+      
     } catch (error) {
       console.error("Błąd podczas wylogowywania:", error);
     }

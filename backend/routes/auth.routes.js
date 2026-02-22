@@ -8,4 +8,5 @@ router.post("/get-user-data", authController.getUserData);
 router.get("/verify", authController.verify);
 router.post("/logout", authController.logout);
 
+
 module.exports = router;
