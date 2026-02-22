@@ -1,4 +1,6 @@
 import psycopg
+from psycopg_pool import ConnectionPool
+from contextlib import asynccontextmanager
 from datetime import datetime
 from fastapi import FastAPI
 from zoneinfo import ZoneInfo
@@ -10,7 +12,13 @@ import os, sys
 from pathlib import Path
 from dotenv import load_dotenv
 import uvicorn
-app = FastAPI()
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+
+logger = logging.getLogger("prawkojazdy")
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 def base_dir():
@@ -22,40 +30,51 @@ PORT = int(os.getenv("PORT", "8000"))
 
 if not DATABASE_URL:
     raise RuntimeError("Brak DATABASE_URL. Dodaj plik .env")
-conn = psycopg.connect(DATABASE_URL)
+pool = ConnectionPool(conninfo = DATABASE_URL, min_size=1, max_size=10, timeout=10)
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    logger.info("API startup - opening DB pool")
+    pool.open()
+    yield
+    logger.info("API startup - closing DB pool")
+    pool.close()
+app = FastAPI(lifespan=lifespan)
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 def verify_password(password: str, password_hash: str) -> bool:
     return pwd_context.verify(password, password_hash)
-def error_db(conn, error : Exception):
-      conn.rollback()
+def error_db(error : Exception):
       if isinstance(error,(OperationalError, InterfaceError)):
             raise HTTPException(status_code=503, detail = "Baza danych niedostępna")
       elif isinstance(error, DatabaseError):
             raise HTTPException(status_code=500, detail=f"Błąd bazy danych: {error.__class__.__name__}")
       raise HTTPException(status_code=500, detail="Nieznany błąd serwera")
 @app.post("/register")
-async def register(data : dict):
+def register(data : dict):
     clientid = data["clientid"]
     password = data["password"]
     password_hash = hash_password(password)
     polish_time = datetime.now(ZoneInfo("Europe/Warsaw")).replace(tzinfo=None)
     try:
-      with conn.cursor() as cur:
-          cur.execute("Insert Into dane_logowania (client_id,password_hash,created_at) Values (%s, %s, %s)", (clientid,password_hash,polish_time))
-      conn.commit()
-      return {"Msg": "Rejestracja pomyślna"}
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("Insert Into dane_logowania (client_id,password_hash,created_at) Values (%s, %s, %s)", (clientid,password_hash,polish_time))
+            conn.commit()
+            return {"Msg": "Rejestracja pomyślna"}
     except UniqueViolation:
-         conn.rollback()
-         return {"Msg": "Użytkownik już istnieje"}
+        conn.rollback()
+        return {"Msg": "Użytkownik już istnieje"}
     except Exception as e:
-      return error_db(conn, e)
+        logger.exception("Error in /register clientid=%s", clientid)
+        conn.rollback()
+        error_db(e)
 @app.post("/login")
-async def login(data : dict):
+def login(data : dict):
      clientid = data["clientid"]
      password = data["password"]
      try:
+        with pool.connection() as conn:
             with conn.cursor() as cur:
                   cur.execute("Select password_hash from dane_logowania where client_id = %s", (clientid,))
                   row = cur.fetchone()
@@ -66,31 +85,35 @@ async def login(data : dict):
                   return {"Msg":"Niepoprawne hasło"}
             return {"Msg": "Logowanie pomyślne"}
      except Exception as e:
-         return error_db(conn,e)
+        logger.exception("Error in /login clientid=%s", clientid)
+        error_db(e)
 @app.post("/editBookings")
-async def editBookings(data : dict):
+def editBookings(data : dict):
      tabela_dat = data["data"]
      try:
-        with conn.cursor() as cur:
-            cur.execute("Update kalendarz Set zajete = TRUE where data = ANY(%s) and zajete = FALSE", (tabela_dat,))
-            updated_rows = cur.rowcount
-        if updated_rows == len(tabela_dat):
-            conn.commit()
-            return {"Msg": "Kursant zapisany"}
-        else:
-            conn.rollback()
-            return {"Msg" : "Godziny zajete"}
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("Update kalendarz Set zajete = TRUE where data = ANY(%s) and zajete = FALSE", (tabela_dat,))
+                updated_rows = cur.rowcount
+            if updated_rows == len(tabela_dat):
+                conn.commit()
+                return {"Msg": "Kursant zapisany"}
+            else:
+                conn.rollback()
+                return {"Msg" : "Godziny zajete"}
      except Exception as e:
-        return error_db(conn, e)
+        conn.rollback()
+        error_db(e)
 @app.post("/getBookings")
-async def getBookings(data:dict):
+def getBookings(data:dict):
     data_ = data["data"]
     try:
-        with conn.cursor() as cur:
-            cur.execute("Select data, zajete From kalendarz where data::date = %s", (data_,))
-            rows = cur.fetchall()
-        return {"Msg": [{"data": dt.strftime("%Y-%m-%d %H:%M:%S"),"status": "available" if not zajete else "booked"}for dt, zajete in rows]}
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("Select data, zajete From kalendarz where data::date = %s", (data_,))
+                rows = cur.fetchall()
+            return {"Msg": [{"data": dt.strftime("%Y-%m-%d %H:%M:%S"),"status": "available" if not zajete else "booked"}for dt, zajete in rows]}
     except Exception as e:
-        error_db(conn, e)
+        error_db(e)
 if __name__ == "__main__":
     uvicorn.run(app, host=HOST, port=PORT)
