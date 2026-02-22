@@ -1,4 +1,4 @@
-const { callPython } = require('../services/pythonService'); 
+const { callPython } = require('../services/python.service'); 
 const { isValid, parseISO } = require('date-fns');
 
 const checkDate = (date) => {
@@ -26,7 +26,8 @@ exports.editBookings = async (req, res) => {
             throw new Error("Brak odpowiedzi z bazy podczas zapisywania rezerwacji");
         }
 
-        res.status(result.status).json({ msg: result.data.msg });
+        res.status(result.status).json({ msg: result.data.Msg });
+
     } catch (error) {
         parseError(error);
     }
@@ -36,10 +37,6 @@ exports.getBookings = async (req, res) => {
     try {
         const { data } = req.body;
 
-        console.log("--- getBookings REQUEST ---");
-        console.log("Payload:", req.body);
-        console.log("Data (typ):", typeof data, "| Wartość:", data);
-
         if (!data) {
             return res.status(400).json({ error: "Brak danych rezerwacji (oczekiwany klucz 'data')" });
         }
@@ -47,7 +44,7 @@ exports.getBookings = async (req, res) => {
         if (!checkDate(data)) {
             return res.status(400).json({ 
                 error: "Nieprawidłowy format daty. Oczekiwany format: YYYY-MM-DD (string)",
-                received: data 
+                data: data 
             });
         }
 
@@ -60,7 +57,7 @@ exports.getBookings = async (req, res) => {
             throw new Error("Brak odpowiedzi z serwisu Python (baza danych)");
         }
 
-        return res.status(result.status || 200).json(result.data);
+        return res.status(result.status || 200).json(result.data.Msg);
         
     } catch (error) {
         console.error("Błąd krytyczny w getBookings:", error);

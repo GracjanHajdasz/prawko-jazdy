@@ -1,13 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
-export default function Navbar() {
+export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    console.log("Wylogowano użytkownika");
-    navigate("/login");
-  };
+  function handleLogout() {
+    axios
+      .post(
+        "http://localhost:5000/api/auth/logout",
+        {},
+        { withCredentials: true },
+      )
+      .then(() => {
+        setIsLoggedIn(false);
+        navigate("/");
+      });
+  }
 
   return (
     <nav className="navbar">
@@ -29,9 +37,15 @@ export default function Navbar() {
         </li>
       </ul>
       <div className="navbar-actions">
-        <button className="btn-logout" onClick={handleLogout}>
-          Wyloguj
-        </button>
+        {isLoggedIn ? (
+          <Link to="/" onClick={handleLogout} className="btn-logout">
+            Wyloguj się
+          </Link>
+        ) : (
+          <Link to="/login" className="btn-login">
+            Zaloguj się
+          </Link>
+        )}
       </div>
     </nav>
   );
