@@ -1,21 +1,25 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import axios from "axios";
 
 export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
 
-  function handleLogout() {
-    axios
-      .post(
+  const handleLogout = async () => {
+    try {
+      await axios.post(
         "http://localhost:5000/api/auth/logout",
         {},
         { withCredentials: true },
-      )
-      .then(() => {
-        setIsLoggedIn(false);
-        navigate("/");
-      });
-  }
+      );
+
+      setIsLoggedIn(false);
+
+      navigate("/");
+    } catch (error) {
+      console.error("Błąd podczas wylogowywania:", error);
+    }
+  };
 
   return (
     <nav className="navbar">
