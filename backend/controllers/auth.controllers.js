@@ -1,5 +1,6 @@
 const { callPython, parseError } = require('../services/python.service'); 
 const { generateToken } = require('../services/token.service');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   try {
@@ -75,6 +76,33 @@ exports.login = async (req, res) => {
     const handledError = parseError(error);
     res.status(handledError.status || 500).json(handledError.data || { error: "Błąd serwera" });
   }
+};
+
+exports.verify = async (req, res) => {
+    try {
+        const token = req.cookies.authToken;
+
+        if (!token) {
+            return res.status(401).json({ isLoggedIn: false, error: "Brak tokenu" });
+        }
+
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ isLoggedIn: false, error: "Token wygasł" });
+            }
+            res.status(200).json({ 
+                isLoggedIn: true, 
+                clientid: decoded.clientid 
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ isLoggedIn: false, error: "Błąd serwera" });
+    }
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie('authToken');
+    res.status(200).json({ msg: "Wylogowano pomyślnie" });
 };
 
 exports.getUserData = async (req, res) => {
