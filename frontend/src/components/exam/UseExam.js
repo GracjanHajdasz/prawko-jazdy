@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useBlocker } from "react-router-dom";
 
 export function useExam() {
@@ -48,6 +48,13 @@ export function useExam() {
     });
   }, [questions.length, handleFinishExam]);
 
+  const skipReadingPhase = useCallback(() => {
+    if (isReadingPhase && currentIndex < 20) {
+      setIsReadingPhase(false);
+      setQuestionTimeLeft(15);
+    }
+  }, [isReadingPhase, currentIndex]);
+
   const handleAnswer = (val) => setAnswers(prev => ({ ...prev, [currentIndex]: val }));
 
   useEffect(() => {
@@ -82,5 +89,18 @@ export function useExam() {
     }
   }, [questionTimeLeft, isReadingPhase, currentIndex, goToNextQuestion, loading, isExamFinished]);
 
-  return { questions, currentIndex, answers, loading, isExamFinished, examTimeLeft, questionTimeLeft, isReadingPhase, handleFinishExam, goToNextQuestion, handleAnswer };
+  return { 
+    questions, 
+    currentIndex, 
+    answers, 
+    loading, 
+    isExamFinished, 
+    examTimeLeft, 
+    questionTimeLeft, 
+    isReadingPhase, 
+    handleFinishExam, 
+    goToNextQuestion, 
+    skipReadingPhase,
+    handleAnswer 
+  };
 }

@@ -6,7 +6,8 @@ export default function ExamRightPanel({ examState }) {
     handleFinishExam,
     questionTimeLeft,
     isReadingPhase,
-    goToNextQuestion
+    goToNextQuestion,
+    skipReadingPhase
   } = examState;
 
   const isSpecjalistyczne = currentIndex >= 20;
@@ -40,8 +41,11 @@ export default function ExamRightPanel({ examState }) {
         <span className="t-value">{formatTime(questionTimeLeft)}</span>
       </div>
 
-      <button className="btn-next" onClick={goToNextQuestion}>
-        Następne pytanie
+      <button 
+        className="btn-next" 
+        onClick={isReadingPhase && !isSpecjalistyczne ? skipReadingPhase : goToNextQuestion}
+      >
+        {isReadingPhase && !isSpecjalistyczne ? "Przejdź do odpowiedzi" : "Następne pytanie"}
       </button>
     </div>
   );

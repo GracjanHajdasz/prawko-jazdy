@@ -10,23 +10,22 @@ export default function ExamResults({
   const czyZdany = sumaPunktow >= 68;
 
   return (
-    <div className="exam-results-container" style={{ textAlign: "center", padding: "40px" }}>
+    <div className="exam-results-container">
       <h1>Wynik egzaminu</h1>
       
-      <h2 style={{ color: czyZdany ? "green" : "red", fontSize: "32px" }}>
+      <h2 className={`result-status ${czyZdany ? 'positive' : 'negative'}`}>
         {czyZdany ? "POZYTYWNY" : "NEGATYWNY"}
       </h2>
 
-      <div className="stats-box" style={{ marginTop: "20px", fontSize: "18px" }}>
-        <p><strong>Zdobyte punkty:</strong> {sumaPunktow} / 74</p>
-        <p><strong>Część podstawowa:</strong> {punktyPodstawowe}</p>
-        <p><strong>Część specjalistyczna:</strong> {punktySpecjalistyczne}</p>
-        <p><strong>Czas trwania egzaminu:</strong> {czasEgzaminu}</p>
+      <div className="stats-box">
+        <p><strong>Zdobyte punkty:</strong> <span>{sumaPunktow} / 74</span></p>
+        <p><strong>Część podstawowa:</strong> <span>{punktyPodstawowe}</span></p>
+        <p><strong>Część specjalistyczna:</strong> <span>{punktySpecjalistyczne}</span></p>
+        <p><strong>Czas trwania egzaminu:</strong> <span>{czasEgzaminu}</span></p>
       </div>
 
       <button 
         className="btn-end" 
-        style={{ marginTop: "30px" }}
         onClick={() => window.location.href = '/testy'}
       >
         Wróć do menu
