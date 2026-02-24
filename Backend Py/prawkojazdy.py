@@ -39,7 +39,7 @@ PORT = int(os.getenv("PORT", "8000"))
 if not DATABASE_URL:
     raise RuntimeError("Brak DATABASE_URL. Dodaj plik .env")
 
-pool = ConnectionPool(conninfo = DATABASE_URL, min_size=1, max_size=10, timeout=10)
+pool = ConnectionPool(conninfo = DATABASE_URL, min_size=1, max_size=10, timeout=10, max_idle=300, max_lifetime=1800)
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -68,6 +68,10 @@ def error_db(error : Exception):
       elif isinstance(error, DatabaseError):
             raise HTTPException(status_code=500, detail=f"Błąd bazy danych: {error.__class__.__name__}")
       raise HTTPException(status_code=500, detail="Nieznany błąd serwera")
+
+def retry(function):
+    return function
+
 
 @app.post("/register")
 def register(data : dict):
@@ -143,13 +147,13 @@ def getExam(request : Request):
     try:
         with pool.connection() as conn:
             with conn.cursor(row_factory = dict_row) as cur:
-                cur.execute("Select pytanie,odpowiedź_a,odpowiedź_b,odpowiedź_c, poprawna_odp, media, liczba_punktów, zakres_struktury from pytaniaegzaminacyjne")
+                cur.execute("Select pytanie,odpowiedź_a,odpowiedź_b,odpowiedź_c, poprawna_odp, media, liczba_punktów, zakres_struktury from pytaniaegzaminacyjne where czykatb = TRUE")
                 rows = cur.fetchall()
     except Exception as e:
         error_db(e)
 
-    df1 = pd.DataFrame(rows)
-    df1 = df1[df1["zakres_struktury"] == "PODSTAWOWY"]
+    df = pd.DataFrame(rows)
+    df1 = df[df["zakres_struktury"] == "PODSTAWOWY"]
     df1 = df1[["pytanie", "poprawna_odp", "media", "liczba_punktów"]]
     PODSTAWOWE_3pkt = df1[df1["liczba_punktów"] == 3].sample(n=10)
     PODSTAWOWE_2pkt = df1[df1["liczba_punktów"] == 2].sample(n=6)
@@ -159,12 +163,11 @@ def getExam(request : Request):
     PODSTAWOWE["media"] =  base_url + PODSTAWOWE["media"].astype(str)
     PODSTAWOWE = PODSTAWOWE.sample(frac=1).reset_index(drop=True)
 
-    df1 = pd.DataFrame(rows)
-    df1 = df1[df1["zakres_struktury"] == "SPECJALISTYCZNY"]
-    df1 = df1.drop(columns=["zakres_struktury"])
-    SPECJALISTYCZNE_3pkt = df1[df1["liczba_punktów"] == 3].sample(n=6)
-    SPECJALISTYCZNE_2pkt = df1[df1["liczba_punktów"] == 2].sample(n=4)
-    SPECJALISTYCZNE_1pkt = df1[df1["liczba_punktów"] == 1].sample(n=2)
+    df2 = df[df["zakres_struktury"] == "SPECJALISTYCZNY"]
+    df2 = df2.drop(columns=["zakres_struktury"])
+    SPECJALISTYCZNE_3pkt = df2[df2["liczba_punktów"] == 3].sample(n=6)
+    SPECJALISTYCZNE_2pkt = df2[df2["liczba_punktów"] == 2].sample(n=4)
+    SPECJALISTYCZNE_1pkt = df2[df2["liczba_punktów"] == 1].sample(n=2)
     SPECJALISTYCZNE = pd.concat([SPECJALISTYCZNE_1pkt,SPECJALISTYCZNE_2pkt,SPECJALISTYCZNE_3pkt], ignore_index=True)
     SPECJALISTYCZNE["media"] =  base_url + SPECJALISTYCZNE["media"].astype(str) 
     SPECJALISTYCZNE = SPECJALISTYCZNE.sample(frac=1).reset_index(drop=True)
