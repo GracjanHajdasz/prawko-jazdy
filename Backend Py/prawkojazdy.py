@@ -143,12 +143,14 @@ def getExam(request : Request):
     try:
         with pool.connection() as conn:
             with conn.cursor(row_factory = dict_row) as cur:
-                cur.execute("Select pytanie, poprawna_odp, media, liczba_punktów from pytaniaegzaminacyjne where czykatb = TRUE and zakres_struktury = %s", ("PODSTAWOWY",))
+                cur.execute("Select pytanie,odpowiedź_a,odpowiedź_b,odpowiedź_c, poprawna_odp, media, liczba_punktów, zakres_struktury from pytaniaegzaminacyjne")
                 rows = cur.fetchall()
     except Exception as e:
         error_db(e)
 
     df1 = pd.DataFrame(rows)
+    df1 = df1[df1["zakres_struktury"] == "PODSTAWOWY"]
+    df1 = df1[["pytanie", "poprawna_odp", "media", "liczba_punktów"]]
     PODSTAWOWE_3pkt = df1[df1["liczba_punktów"] == 3].sample(n=10)
     PODSTAWOWE_2pkt = df1[df1["liczba_punktów"] == 2].sample(n=6)
     PODSTAWOWE_1pkt = df1[df1["liczba_punktów"] == 1].sample(n=4)
@@ -157,15 +159,9 @@ def getExam(request : Request):
     PODSTAWOWE["media"] =  base_url + PODSTAWOWE["media"].astype(str)
     PODSTAWOWE = PODSTAWOWE.sample(frac=1).reset_index(drop=True)
 
-    try:
-        with pool.connection() as conn:
-            with conn.cursor(row_factory = dict_row) as cur:
-                cur.execute("Select pytanie,odpowiedź_a,odpowiedź_b,odpowiedź_c,poprawna_odp, media, liczba_punktów from pytaniaegzaminacyjne where czykatb = TRUE and zakres_struktury = %s",("SPECJALISTYCZNY",))
-                rows = cur.fetchall()
-    except Exception as e:
-        error_db(e)
-
     df1 = pd.DataFrame(rows)
+    df1 = df1[df1["zakres_struktury"] == "SPECJALISTYCZNY"]
+    df1 = df1.drop(columns=["zakres_struktury"])
     SPECJALISTYCZNE_3pkt = df1[df1["liczba_punktów"] == 3].sample(n=6)
     SPECJALISTYCZNE_2pkt = df1[df1["liczba_punktów"] == 2].sample(n=4)
     SPECJALISTYCZNE_1pkt = df1[df1["liczba_punktów"] == 1].sample(n=2)
