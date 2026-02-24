@@ -1,11 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./Navbar.css";
 import axios from "axios";
-
+ 
 export default function Navbar({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogout = async () => {
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
+    if (location.pathname === "/egzamin") {
+      const proceed = window.confirm(
+        "Wyjście z egzaminu spowoduje utratę postępu. Czy na pewno chcesz się wylogować?"
+      );
+      if (!proceed) return;
+    }
+
     try {
       await axios.post(
         "http://localhost:5000/api/auth/logout", 
