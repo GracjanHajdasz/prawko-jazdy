@@ -5,3 +5,11 @@
   min-height: 84vh;
   margin-bottom: 80px;
 }
+
+.app-login {
+    min-height: 100vh;
+}
+
+.login-container {
+    margin: 0;
+}

@@ -1,9 +1,8 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import axios from "axios";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
 
-// Komponenty
 import Navbar from "./components/navbar/Navbar.jsx";
 import Login from "./components/login-page/Login.jsx";
 import Register from "./components/register-page/Register.jsx";
@@ -15,6 +14,80 @@ import Exam from "./components/exam/Exam.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import UserPanel from "./components/user-panel/UserPanel.jsx";
 import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
+
+const AppContext = createContext(null);
+
+function AppLayout() {
+  const { isLoggedIn, setIsLoggedIn, showPopUp, popUpText, setShowPopUp, triggerPopUp } = useContext(AppContext);
+
+  return (
+    <>
+      {isLoggedIn && <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
+      <div className={`app ${!isLoggedIn ? "app-login" : ""}`}>
+        <Outlet context={{ triggerPopUp, setIsLoggedIn }} />
+        {showPopUp && (
+          <PopUp
+            popUpText={popUpText}
+            duration={3000}
+            show={showPopUp}
+            setShowPopUp={setShowPopUp}
+          />
+        )}
+      </div>
+      {isLoggedIn && <Footer />}
+    </>
+  );
+}
+
+function ProtectedRoute({ children }) {
+  const { isLoggedIn } = useContext(AppContext);
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  return children;
+}
+
+function PublicRoute({ children }) {
+  const { isLoggedIn } = useContext(AppContext);
+  if (isLoggedIn) return <Navigate to="/" replace />;
+  return children;
+}
+
+function CatchAllRoute() {
+  const { isLoggedIn } = useContext(AppContext);
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  return <PageNotFound />;
+}
+
+function LoginWrapper() {
+  const { setIsLoggedIn, triggerPopUp } = useContext(AppContext);
+  return <Login setIsLoggedIn={setIsLoggedIn} triggerPopUp={triggerPopUp} />;
+}
+
+function RegisterWrapper() {
+  const { triggerPopUp } = useContext(AppContext);
+  return <Register triggerPopUp={triggerPopUp} />;
+}
+
+function SchedulerWrapper() {
+  const { triggerPopUp } = useContext(AppContext);
+  return <Scheduler triggerPopUp={triggerPopUp} />;
+}
+
+const router = createBrowserRouter([
+  {
+    element: <AppLayout />,
+    children: [
+      { path: "/login", element: <PublicRoute><LoginWrapper /></PublicRoute> },
+      { path: "/register", element: <PublicRoute><RegisterWrapper /></PublicRoute> },
+      { path: "/", element: <ProtectedRoute><MainPage /></ProtectedRoute> },
+      { path: "/harmonogram", element: <ProtectedRoute><SchedulerWrapper /></ProtectedRoute> },
+      { path: "/testy", element: <ProtectedRoute><Tests /></ProtectedRoute> },
+      { path: "/egzamin", element: <ProtectedRoute><Exam /></ProtectedRoute> },
+      { path: "/panel-uzytkownika", element: <ProtectedRoute><UserPanel /></ProtectedRoute> },
+      
+      { path: "*", element: <CatchAllRoute /> }
+    ]
+  }
+]);
 
 export default function App() {
   const [showPopUp, setShowPopUp] = useState(false);
@@ -30,8 +103,8 @@ export default function App() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        await axios.get("http://localhost:5000/api/auth/verify", { 
-          withCredentials: true 
+        await axios.get("http://localhost:5000/api/auth/verify", {
+          withCredentials: true,
         });
         setIsLoggedIn(true);
       } catch (error) {
@@ -40,47 +113,20 @@ export default function App() {
         setLoading(false);
       }
     };
-
     checkSession();
   }, []);
 
   if (loading) return <div>Ładowanie...</div>;
 
-  return (
-    <BrowserRouter>
-      <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      
-      <div className="app">
-        {!isLoggedIn ? (
-          <Routes>
-            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} triggerPopUp={triggerPopUp} />} />
-            <Route path="/register" element={<Register triggerPopUp={triggerPopUp} />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        ) : (
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/harmonogram" element={<Scheduler triggerPopUp={triggerPopUp} />} />
-            <Route path="/testy" element={<Tests />} />
-            <Route path="/egzamin" element={<Exam />} />
-            <Route path="/panel-uzytkownika" element={<UserPanel />} />
-            <Route path="/login" element={<Navigate to="/" replace />} />
-            <Route path="/register" element={<Navigate to="/" replace />} />
-            
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
-        )}
+  const contextValue = {
+    isLoggedIn, setIsLoggedIn,
+    showPopUp, setShowPopUp,
+    popUpText, triggerPopUp
+  };
 
-        {showPopUp && (
-          <PopUp
-            popUpText={popUpText}
-            duration={3000}
-            show={showPopUp}
-            setShowPopUp={setShowPopUp}
-          />
-        )}
-      </div>
-      <Footer />
-    </BrowserRouter>
+  return (
+    <AppContext.Provider value={contextValue}>
+      <RouterProvider router={router} />
+    </AppContext.Provider>
   );
 }

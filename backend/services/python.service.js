@@ -55,6 +55,10 @@ exports.callPython = async (payload) => {
             endpoint = "/editBookings"; 
             dataToSend = { data: payload.data };
         }
+        else if (payload.query_type === "get_exam") {
+            endpoint = "/getExam"; 
+            dataToSend = { data: payload.data };
+        }
         
         const response = await axios.post(`${process.env.PYTHON_SERVICE_URL}${endpoint}`, dataToSend, {
             timeout: 5000,
