@@ -1,0 +1,19 @@
+.exam-loading-container {
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 92vh;
+}
+
+.exam-loading-container h1 {
+  text-align: center;
+  margin: 2rem;
+}
+
+.exam-loading-container span {
+  color: #ff4d4d;
+}
