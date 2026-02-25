@@ -5,7 +5,7 @@ import ExamRightPanel from "./ExamRightPanel";
 import ExamLoading from "./exam-loading/ExamLoading.jsx";
 import { useExam } from "./UseExam";
 import { formatTime, calculateScore } from "./ExamUtils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Exam() {
   const [isLoaded, setIsLoaded] = useState(false); //do loading screena
@@ -14,6 +14,13 @@ export default function Exam() {
     examState;
 
   //if (loading || questions.length === 0) return <div>Ładowanie...</div>;
+
+  useEffect(() => {
+  if (examTimeLeft <= 0) {
+    const czasEgzaminuSekundy = 1500 - examTimeLeft;
+    examState.handleFinishExam(czasEgzaminuSekundy);
+  }
+}, [examTimeLeft, examState]);
 
   if (isExamFinished) {
     const results = calculateScore(questions, answers);

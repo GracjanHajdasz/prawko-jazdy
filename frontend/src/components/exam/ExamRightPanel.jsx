@@ -5,9 +5,9 @@ export default function ExamRightPanel({ examState }) {
     currentIndex,
     handleFinishExam,
     questionTimeLeft,
-    isReadingPhase,
+    questionPhase,
     goToNextQuestion,
-    skipReadingPhase
+    startMedia
   } = examState;
 
   const isSpecjalistyczne = currentIndex >= 20;
@@ -36,17 +36,25 @@ export default function ExamRightPanel({ examState }) {
 
       <div className="timer-section">
         <div className="t-label">
-          Czas na {isReadingPhase ? "zapoznanie się" : "udzielenie odpowiedzi"}
+          {questionPhase === "reading" ? "Czas na zapoznanie się" : 
+           questionPhase === "playing" ? "Odtwarzanie..." : 
+           "Czas na odpowiedź"}
         </div>
-        <span className="t-value">{formatTime(questionTimeLeft)}</span>
+        <span className="t-value">
+          {questionPhase === "playing" ? "--:--" : formatTime(questionTimeLeft)}
+        </span>
       </div>
 
-      <button 
-        className="btn-next" 
-        onClick={isReadingPhase && !isSpecjalistyczne ? skipReadingPhase : goToNextQuestion}
-      >
-        {isReadingPhase && !isSpecjalistyczne ? "Przejdź do odpowiedzi" : "Następne pytanie"}
-      </button>
+      <div className="bottom-buttons">
+        <button className="btn-next" onClick={goToNextQuestion} disabled={questionPhase === "reading"}>
+          Następne pytanie
+        </button>
+        {questionPhase === "reading" && !isSpecjalistyczne && (
+          <button className="btn-next" onClick={startMedia}>
+            Pomiń zapoznanie
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ export function useExam() {
   
   const [examTimeLeft, setExamTimeLeft] = useState(1500); 
   const [questionTimeLeft, setQuestionTimeLeft] = useState(20);
-  const [isReadingPhase, setIsReadingPhase] = useState(true);
+  const [questionPhase, setQuestionPhase] = useState("reading");
 
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
@@ -35,25 +35,35 @@ export function useExam() {
 
   const handleFinishExam = useCallback(() => setIsExamFinished(true), []);
 
+  const finishMedia = useCallback(() => {
+    setQuestionPhase("answering");
+    setQuestionTimeLeft(15);
+  }, []);
+
+  const startMedia = useCallback(() => {
+    const currentQ = questions[currentIndex];
+    const isVideo = currentQ?.media?.toLowerCase().endsWith(".mp4");
+    
+    if (isVideo) {
+      setQuestionPhase("playing");
+    } else {
+      finishMedia();
+    }
+  }, [questions, currentIndex, finishMedia]);
+
   const goToNextQuestion = useCallback(() => {
     setCurrentIndex((prev) => {
       if (prev < questions.length - 1) {
         const next = prev + 1;
-        setIsReadingPhase(next < 20);
-        setQuestionTimeLeft(next < 20 ? 20 : 50);
+        const isBasic = next < 20;
+        setQuestionPhase(isBasic ? "reading" : "answering");
+        setQuestionTimeLeft(isBasic ? 20 : 50);
         return next;
       }
       handleFinishExam();
       return prev;
     });
   }, [questions.length, handleFinishExam]);
-
-  const skipReadingPhase = useCallback(() => {
-    if (isReadingPhase && currentIndex < 20) {
-      setIsReadingPhase(false);
-      setQuestionTimeLeft(15);
-    }
-  }, [isReadingPhase, currentIndex]);
 
   const handleAnswer = (val) => setAnswers(prev => ({ ...prev, [currentIndex]: val }));
 
@@ -63,6 +73,8 @@ export function useExam() {
       .then(data => {
         setQuestions([...data.podstawowe, ...data.specjalistyczne]);
         setLoading(false);
+        setQuestionPhase("reading");
+        setQuestionTimeLeft(20);
       });
   }, []);
 
@@ -73,21 +85,20 @@ export function useExam() {
   }, [loading, isExamFinished]);
 
   useEffect(() => {
-    if (loading || isExamFinished) return;
+    if (loading || isExamFinished || questionPhase === "playing") return;
     const itv = setInterval(() => setQuestionTimeLeft(p => p - 1), 1000);
     return () => clearInterval(itv);
-  }, [loading, isExamFinished, currentIndex]);
+  }, [loading, isExamFinished, questionPhase]);
 
   useEffect(() => {
     if (questionTimeLeft <= 0 && !loading && !isExamFinished) {
-      if (isReadingPhase && currentIndex < 20) {
-        setIsReadingPhase(false);
-        setQuestionTimeLeft(15);
-      } else {
+      if (questionPhase === "reading") {
+        startMedia();
+      } else if (questionPhase === "answering") {
         goToNextQuestion();
       }
     }
-  }, [questionTimeLeft, isReadingPhase, currentIndex, goToNextQuestion, loading, isExamFinished]);
+  }, [questionTimeLeft, questionPhase, startMedia, goToNextQuestion, loading, isExamFinished]);
 
   return { 
     questions, 
@@ -97,10 +108,11 @@ export function useExam() {
     isExamFinished, 
     examTimeLeft, 
     questionTimeLeft, 
-    isReadingPhase, 
+    questionPhase, 
     handleFinishExam, 
     goToNextQuestion, 
-    skipReadingPhase,
+    startMedia,
+    finishMedia,
     handleAnswer 
   };
 }

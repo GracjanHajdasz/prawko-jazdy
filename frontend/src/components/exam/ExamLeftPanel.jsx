@@ -6,9 +6,10 @@ export default function ExamLeftPanel({ examState }) {
     questions,
     currentIndex,
     answers,
-    isReadingPhase,
+    questionPhase,
     handleAnswer,
     examTimeLeft,
+    finishMedia
   } = examState;
 
   const currentQuestion = questions[currentIndex];
@@ -42,9 +43,20 @@ export default function ExamLeftPanel({ examState }) {
       </div>
 
       <div className="image-area">
-        {currentQuestion.media ? (
+        {questionPhase === "reading" ? (
+          <div className="media-placeholder">
+            Naciśnij "Pomiń zapoznanie" aby zobaczyć obraz/video/multimedia
+          </div>
+        ) : currentQuestion.media ? (
           currentQuestion.media.toLowerCase().endsWith(".mp4") ? (
-            <video src={currentQuestion.media} autoPlay muted playsInline />
+            <video 
+              src={currentQuestion.media} 
+              autoPlay 
+              muted 
+              playsInline 
+              onEnded={finishMedia}
+              onError={finishMedia}
+            />
           ) : (
             <img src={currentQuestion.media} alt="zdjęcie do pytania" />
           )
@@ -62,14 +74,12 @@ export default function ExamLeftPanel({ examState }) {
               <button
                 className={`btn-answer ${answers[currentIndex] === "T" ? "selected" : ""}`}
                 onClick={() => handleAnswer("T")}
-                disabled={isReadingPhase}
               >
                 Tak
               </button>
               <button
                 className={`btn-answer ${answers[currentIndex] === "N" ? "selected" : ""}`}
                 onClick={() => handleAnswer("N")}
-                disabled={isReadingPhase}
               >
                 Nie
               </button>
@@ -79,21 +89,18 @@ export default function ExamLeftPanel({ examState }) {
               <button
                 className={`btn-answer ${answers[currentIndex] === "A" ? "selected" : ""}`}
                 onClick={() => handleAnswer("A")}
-                disabled={isReadingPhase}
               >
                 {currentQuestion.odpowiedź_a}
               </button>
               <button
                 className={`btn-answer ${answers[currentIndex] === "B" ? "selected" : ""}`}
                 onClick={() => handleAnswer("B")}
-                disabled={isReadingPhase}
               >
                 {currentQuestion.odpowiedź_b}
               </button>
               <button
                 className={`btn-answer ${answers[currentIndex] === "C" ? "selected" : ""}`}
                 onClick={() => handleAnswer("C")}
-                disabled={isReadingPhase}
               >
                 {currentQuestion.odpowiedź_c}
               </button>
