@@ -1,71 +1,44 @@
 require('dotenv').config();
 const axios = require('axios');
 
-exports.parseError = (error) => {
-    if (error.code === 'ECONNREFUSED') {
-        console.error("Python service is not running..");
-        return { status: 503, data: { error: "Service temporarily unavailable." } };
+const pythonApi = axios.create({
+    baseURL: process.env.PYTHON_SERVICE_URL,
+    timeout: 5000,
+    headers: {
+        'x-internal-secret': process.env.API_SECRET 
     }
+});
 
-    if (error.response) {
-        const responseData = error.response.data;
-        const responseStatus = error.response.status;
+pythonApi.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
 
-        console.error("Response from Python service:", responseData);
-
-        if (responseData && responseData.msg === "Zalogowano pomyślnie") {
-            return { status: 200, data: responseData };
+        if (error.response && error.response.status === 503 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            return pythonApi(originalRequest);
         }
 
-        return { status: responseStatus, data: responseData };
+        return Promise.reject(error);
     }
+);
 
-    console.error("Internal error:", error.message);
-    return { status: 500, data: { error: "Internal server error." } };
-}
+const endpoints = {
+    "register": "/register",
+    "login": "/login",
+    "fetch_profile": "/get-user-data",
+    "fetch_bookings": "/getBookings",
+    "edit_bookings": "/editBookings",
+    "get_exam": "/getExam"
+};
 
 exports.callPython = async (payload) => {
     try {
-        let endpoint = "";
-        let dataToSend = {};
+        const endpoint = endpoints[payload.query_type];
         
-        if (payload.query_type === "register") {
-            endpoint = "/register";
-            dataToSend = { 
-                clientid: payload.clientid, 
-                password: payload.password 
-            };
-        } 
-        else if (payload.query_type === "login") {
-            endpoint = "/login";
-            dataToSend = { 
-                clientid: payload.clientid, 
-                password: payload.password 
-            };
-        }
-        else if (payload.query_type === "fetch_profile") {
-            endpoint = "/get-profile"; 
-            dataToSend = { clientid: payload.clientid };
-        }
-        else if (payload.query_type === "fetch_bookings") {
-            endpoint = "/getBookings"; 
-            dataToSend = { data: payload.data };
-        }
-        else if (payload.query_type === "edit_bookings") {
-            endpoint = "/editBookings"; 
-            dataToSend = { data: payload.data };
-        }
-        else if (payload.query_type === "get_exam") {
-            endpoint = "/getExam"; 
-            dataToSend = { data: payload.data };
-        }
-        
-        const response = await axios.post(`${process.env.PYTHON_SERVICE_URL}${endpoint}`, dataToSend, {
-            timeout: 5000,
-            headers: {
-                'x-internal-secret': process.env.API_SECRET 
-            }
-        });
+        const { query_type, ...dataToSend } = payload;
+
+        const response = await pythonApi.post(endpoint, dataToSend);
 
         return { status: 200, data: response.data };
 
