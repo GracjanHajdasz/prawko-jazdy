@@ -32,6 +32,29 @@ const endpoints = {
     "get_exam": "/getExam"
 };
 
+exports.parseError = (error) => {
+    if (error.code === 'ECONNREFUSED') {
+        console.error("Python service is not running..");
+        return { status: 503, data: { error: "Service temporarily unavailable." } };
+    }
+
+    if (error.response) {
+        const responseData = error.response.data;
+        const responseStatus = error.response.status;
+
+        console.error("Response from Python service:", responseData);
+
+        if (responseData && responseData.msg === "Zalogowano pomyślnie") {
+            return { status: 200, data: responseData };
+        }
+
+        return { status: responseStatus, data: responseData };
+    }
+
+    console.error("Internal error:", error.message);
+    return { status: 500, data: { error: "Internal server error." } };
+}
+
 exports.callPython = async (payload) => {
     try {
         const endpoint = endpoints[payload.query_type];

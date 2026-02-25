@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
 
   } catch (error) {
     const handledError = parseError(error);
-    res.status(handledError.status).json(handledError.data);
+    res.status(error.status).json(handledError.data);
   }
 };
 
