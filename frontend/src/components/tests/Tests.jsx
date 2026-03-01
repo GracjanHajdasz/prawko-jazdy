@@ -84,7 +84,9 @@ export default function Tests() {
       <section>
         <img src={testsIcon} alt="tests icon" />
         <h2>Rozpocznij próbny egzamin</h2>
-        <Link to="/egzamin" className="btn tests-btn">Rozpocznij</Link>
+        <Link to="/egzamin" className="btn tests-btn">
+          Rozpocznij
+        </Link>
       </section>
     </div>
   );

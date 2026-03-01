@@ -1,0 +1,28 @@
+.badge-exam-view {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.4rem 0.8rem;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.exam-container .right-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 2rem);
+  grid-template-rows: repeat(8, 2rem);
+  align-content: start;
+  height: auto;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  justify-content: center;
+}
+
+.explanation-area {
+  margin-top: 5rem;
+  width: 10rem;
+}
+
+.explanation-area p {
+  font-size: large;
+}

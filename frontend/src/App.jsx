@@ -1,7 +1,12 @@
 import "./App.css";
 import { useState, useEffect, createContext, useContext } from "react";
 import axios from "axios";
-import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 
 import Navbar from "./components/navbar/Navbar.jsx";
 import Login from "./components/login-page/Login.jsx";
@@ -14,15 +19,25 @@ import Exam from "./components/exam/Exam.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import UserPanel from "./components/user-panel/UserPanel.jsx";
 import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
+import ExamView from "./components/exam-view/ExamView.jsx";
 
 const AppContext = createContext(null);
 
 function AppLayout() {
-  const { isLoggedIn, setIsLoggedIn, showPopUp, popUpText, setShowPopUp, triggerPopUp } = useContext(AppContext);
+  const {
+    isLoggedIn,
+    setIsLoggedIn,
+    showPopUp,
+    popUpText,
+    setShowPopUp,
+    triggerPopUp,
+  } = useContext(AppContext);
 
   return (
     <>
-      {isLoggedIn && <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
+      {isLoggedIn && (
+        <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      )}
       <div className={`app ${!isLoggedIn ? "app-login" : ""}`}>
         <Outlet context={{ triggerPopUp, setIsLoggedIn }} />
         {showPopUp && (
@@ -76,17 +91,73 @@ const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
-      { path: "/login", element: <PublicRoute><LoginWrapper /></PublicRoute> },
-      { path: "/register", element: <PublicRoute><RegisterWrapper /></PublicRoute> },
-      { path: "/", element: <ProtectedRoute><MainPage /></ProtectedRoute> },
-      { path: "/harmonogram", element: <ProtectedRoute><SchedulerWrapper /></ProtectedRoute> },
-      { path: "/testy", element: <ProtectedRoute><Tests /></ProtectedRoute> },
-      { path: "/egzamin", element: <ProtectedRoute><Exam /></ProtectedRoute> },
-      { path: "/panel-uzytkownika", element: <ProtectedRoute><UserPanel /></ProtectedRoute> },
-      
-      { path: "*", element: <CatchAllRoute /> }
-    ]
-  }
+      {
+        path: "/login",
+        element: (
+          <PublicRoute>
+            <LoginWrapper />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <PublicRoute>
+            <RegisterWrapper />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <MainPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/harmonogram",
+        element: (
+          <ProtectedRoute>
+            <SchedulerWrapper />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/testy",
+        element: (
+          <ProtectedRoute>
+            <Tests />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/egzamin",
+        element: (
+          <ProtectedRoute>
+            <Exam />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/panel-uzytkownika",
+        element: (
+          <ProtectedRoute>
+            <UserPanel />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/podglad",
+        element: (
+          <ProtectedRoute>
+            <ExamView />
+          </ProtectedRoute>
+        ),
+      },
+      { path: "*", element: <CatchAllRoute /> },
+    ],
+  },
 ]);
 
 export default function App() {
@@ -119,9 +190,12 @@ export default function App() {
   if (loading) return <div>Ładowanie...</div>;
 
   const contextValue = {
-    isLoggedIn, setIsLoggedIn,
-    showPopUp, setShowPopUp,
-    popUpText, triggerPopUp
+    isLoggedIn,
+    setIsLoggedIn,
+    showPopUp,
+    setShowPopUp,
+    popUpText,
+    triggerPopUp,
   };
 
   return (
