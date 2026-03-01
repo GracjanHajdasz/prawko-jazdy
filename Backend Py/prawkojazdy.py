@@ -2,12 +2,12 @@ import psycopg
 from psycopg_pool import ConnectionPool
 from contextlib import asynccontextmanager
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi import Request
 from zoneinfo import ZoneInfo
 from psycopg.errors import UniqueViolation
 from psycopg import OperationalError, InterfaceError, DatabaseError, Error
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from passlib.context import CryptContext
 import os, sys
 from pathlib import Path
@@ -19,6 +19,7 @@ import random as rd
 from psycopg.rows import dict_row
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,7 +50,16 @@ async def lifespan(app:FastAPI):
     logger.info("API startup - closing DB pool")
     pool.close()
 
-app = FastAPI(lifespan=lifespan)
+API_KEY = os.getenv("API_KEY")
+
+if not API_KEY:
+    raise HTTPException(status_code=401, detail="Brak API_KEY w env")
+
+def verify_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Brak autoryzacji")
+
+app = FastAPI(lifespan=lifespan,dependencies=[Depends(verify_api_key)])
 
 BASE_DIR = Path(__file__).resolve().parent
 MEDIA_DIR = BASE_DIR / "pytania_egzaminacyjne_2025"
@@ -100,14 +110,14 @@ def login(data : dict):
      try:
         with pool.connection() as conn:
             with conn.cursor() as cur:
-                  cur.execute("Select password_hash from dane_logowania where client_id = %s", (clientid,))
+                  cur.execute("""Select dl."password_hash", dl."Rola" from dane_logowania dl where client_id = %s""", (clientid,))
                   row = cur.fetchone()
             if row is None:
                   return {"Msg":"Użytkownik nie istnieje"}
             stored_hash = row[0]
             if not verify_password(password, stored_hash):
                   return {"Msg":"Niepoprawne hasło"}
-            return {"Msg": "Logowanie pomyślne"}
+            return {"Msg": "Logowanie pomyślne","Rola":row[1]}
      except Exception as e:
         logger.exception("Error in /login clientid=%s", clientid)
         error_db(e)
@@ -147,14 +157,14 @@ def getExam(request : Request):
     try:
         with pool.connection() as conn:
             with conn.cursor(row_factory = dict_row) as cur:
-                cur.execute("Select pytanie,odpowiedź_a,odpowiedź_b,odpowiedź_c, poprawna_odp, media, liczba_punktów, zakres_struktury from pytaniaegzaminacyjne where czykatb = TRUE")
+                cur.execute("Select lp,pytanie,odpowiedź_a,odpowiedź_b,odpowiedź_c, poprawna_odp, media, liczba_punktów, zakres_struktury from pytaniaegzaminacyjne where czykatb = TRUE")
                 rows = cur.fetchall()
     except Exception as e:
         error_db(e)
 
     df = pd.DataFrame(rows)
     df1 = df[df["zakres_struktury"] == "PODSTAWOWY"]
-    df1 = df1[["pytanie", "poprawna_odp", "media", "liczba_punktów"]]
+    df1 = df1[["lp","pytanie", "poprawna_odp", "media", "liczba_punktów"]]
     PODSTAWOWE_3pkt = df1[df1["liczba_punktów"] == 3].sample(n=10)
     PODSTAWOWE_2pkt = df1[df1["liczba_punktów"] == 2].sample(n=6)
     PODSTAWOWE_1pkt = df1[df1["liczba_punktów"] == 1].sample(n=4)
@@ -176,5 +186,59 @@ def getExam(request : Request):
             "specjalistyczne" : SPECJALISTYCZNE.to_dict(orient="records")
             }
 
+@app.post("/getExamsResults")
+def getExamResults(data : dict):
+    clientid = data["clientId"]
+    try:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                cur.execute("Select id, data_egzaminu, liczba_punktow from wyniki_egzaminow where clientid = %s order by data_egzaminu desc limit 30", (clientid,))
+                rows = cur.fetchall()
+    except Exception as e:
+        error_db(e)
+    df1 = pd.DataFrame(rows)
+    df1["data_egzaminu"] = pd.to_datetime(df1["data_egzaminu"])
+    df1["data_egzaminu"] = df1["data_egzaminu"].astype("str")
+    return {"Exams": df1.to_dict(orient="records")}
+
+@app.post("/saveExamResults")
+def saveExamResults(data:dict):
+    clientid = data["clientId"]
+    data_egzaminu = data["data_egzaminu"]
+    uzyskane_punkty = data["uzyskane_punkty"]
+    udzielone_odpowiedzi = data["odpowiedzi"]
+    if (len(udzielone_odpowiedzi) != 32):
+        return {"Msg": "Nie przesłano wszystkich pytań"}
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("Insert Into wyniki_egzaminow (clientid, data_egzaminu, liczba_punktow) Values (%s, %s, %s) RETURNING id", (clientid, data_egzaminu, uzyskane_punkty))
+                id = cur.fetchone()[0]
+                data = [(id,odp["lp"], odp["udzielona_odp"]) for odp in udzielone_odpowiedzi]
+                cur.executemany("Insert Into wyniki_egzaminow_pytania Values (%s,%s,%s)", data)
+            conn.commit()
+            return {"Msg" : "Zapis egzaminu pomyślny"}
+    except Exception as e:
+        conn.rollback()
+        error_db(e)
+
+@app.post("/getExamQuestions")
+def getExamQuestions(data:dict):
+    id_egzaminu = data["id"]
+    try:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                cur.execute("""Select pe."pytanie",pe."odpowiedź_a",pe."odpowiedź_b",pe."odpowiedź_c",pe."poprawna_odp",pe."media",pe."liczba_punktów",pe."zakres_struktury",wep."udzielona_odp",pe."wyjasnienie" from wyniki_egzaminow_pytania wep left join pytaniaegzaminacyjne pe on wep."lp_pytania" = pe."lp" where wep."id_egzaminu" = %s order by wep."id_pytania" """,(id_egzaminu,))
+                rows = cur.fetchall()
+    except Exception as e:
+        error_db(e)
+    df1 = pd.DataFrame(rows)
+    df2 = df1[df1["zakres_struktury"] == "PODSTAWOWY"]
+    df2 = df2.drop(columns=["odpowiedź_a","odpowiedź_b","odpowiedź_c","zakres_struktury"])
+    df2["wyjasnienie"] = df2["wyjasnienie"].where(pd.notnull, "NI MA NIC")
+    df3 = df1[df1["zakres_struktury"] == "SPECJALISTYCZNY"]
+    df3 = df3.drop(columns=["zakres_struktury"])
+    df3["wyjasnienie"]=df3["wyjasnienie"].where(pd.notnull, "NI MA NIC")
+    return {"podstawowe":[df2.to_dict(orient="records")], "specjalistyczne":[df3.to_dict(orient="records")]}
 if __name__ == "__main__":
     uvicorn.run(app, host=HOST, port=PORT)
