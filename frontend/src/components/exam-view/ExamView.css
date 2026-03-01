@@ -7,7 +7,25 @@
   text-align: center;
 }
 
-.exam-container .right-panel {
+.exam-view-container {
+  background: #f0f0f0;
+  border: 0.125rem solid #ccc;
+  display: flex;
+  gap: 0;
+  width: 100vw;
+  height: 90vh;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.exam-view-container .left-panel {
+  flex: 1;
+  padding: 1.5rem;
+  border-right: 0.125rem solid #ccc;
+  box-sizing: border-box;
+}
+
+.exam-view-container .right-panel {
   display: grid;
   grid-template-columns: repeat(4, 2rem);
   grid-template-rows: repeat(8, 2rem);

@@ -4,7 +4,7 @@ import QuestionTile from "./question-tile/QuestionTile.jsx";
 
 export default function ExamView() {
   return (
-    <div className="exam-container">
+    <div className="exam-view-container">
       <section className="left-panel">
         <div className="top-bar">
           <div className="info-group">
