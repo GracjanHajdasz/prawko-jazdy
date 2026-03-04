@@ -5,7 +5,7 @@ const pythonApi = axios.create({
     baseURL: process.env.PYTHON_SERVICE_URL,
     timeout: 5000,
     headers: {
-        'x-internal-secret': process.env.API_SECRET 
+        'x-api-key': process.env.API_KEY 
     }
 });
 
@@ -67,6 +67,7 @@ exports.callPython = async (payload) => {
 
     } catch (error) {
         if (error.response) {
+            console.log(JSON.stringify(error.response.data, null, 2));
             return { status: error.response.status, data: error.response.data };
         } else if (error.code === 'ECONNREFUSED') {
             return { status: 503, data: { error: "Python service is offline" } };
