@@ -46,6 +46,8 @@ export default function Login({ setIsLoggedIn, triggerPopUp }) {
         }
       )
       .then((response) => {
+        localStorage.setItem("clientid", clientid);
+        
         triggerPopUp(response.data.msg); 
         
         setIsLoggedIn(true); 

@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import "./ExamBlock.css";
 
-export default function ExamBlock({ key, date, status }) {
+export default function ExamBlock({ id, date, status }) {
   return (
-    <Link to="/podglad">
+    <Link to={`/podglad/${id}`}>
       <p
-        key={key}
         className={`exam-block ${status === "passed" ? "passed" : "failed"}`}
       >
         data: {date}{" "}

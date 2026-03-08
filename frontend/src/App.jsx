@@ -148,7 +148,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/podglad",
+        path: "/podglad/:id",
         element: (
           <ProtectedRoute>
             <ExamView />

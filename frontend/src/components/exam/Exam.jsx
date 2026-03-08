@@ -16,15 +16,21 @@ export default function Exam() {
   //if (loading || questions.length === 0) return <div>Ładowanie...</div>;
 
   useEffect(() => {
-  if (examTimeLeft <= 0) {
-    const czasEgzaminuSekundy = 1500 - examTimeLeft;
-    examState.handleFinishExam(czasEgzaminuSekundy);
-  }
-}, [examTimeLeft, examState]);
+    if (examTimeLeft <= 0) {
+      const czasEgzaminuSekundy = 1500 - examTimeLeft;
+      examState.handleFinishExam(czasEgzaminuSekundy);
+    }
+  }, [examTimeLeft, examState]);
 
   if (isExamFinished) {
     const results = calculateScore(questions, answers);
     const czasEgzaminuSekundy = 1500 - examTimeLeft;
+    const sformatowaneOdpowiedzi = questions.map((pytanie, index) => {
+      return {
+        lp: pytanie.lp,
+        udzielona_odp: answers[index] || "" 
+      };
+    });
 
     return (
       <ExamResults
@@ -32,6 +38,7 @@ export default function Exam() {
         punktyPodstawowe={results.podstawowe}
         punktySpecjalistyczne={results.specjalistyczne}
         czasEgzaminu={formatTime(czasEgzaminuSekundy)}
+        odpowiedzi={sformatowaneOdpowiedzi}
       />
     );
   }

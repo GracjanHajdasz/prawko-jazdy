@@ -1,41 +1,9 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import "./Tests.css";
 import testsIcon from "../../assets/tests.png";
 import ExamBlock from "./exam-block/ExamBlock";
 import { Link } from "react-router-dom";
-
-const fetchMockExams = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          date: "2024-01-15T10:00:00",
-          status: "passed",
-        },
-        {
-          date: "2024-01-22T14:30:00",
-          status: "failed",
-        },
-        {
-          date: "2024-02-05T09:00:00",
-          status: "passed",
-        },
-        {
-          date: "2024-02-18T11:15:00",
-          status: "passed",
-        },
-        {
-          date: "2024-03-10T15:45:00",
-          status: "failed",
-        },
-        {
-          date: "2024-03-24T13:00:00",
-          status: "passed",
-        },
-      ]);
-    }, 800);
-  });
-};
 
 export default function Tests() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,17 +15,40 @@ export default function Tests() {
     setIsLoading(true);
     setError(null);
 
-    fetchMockExams()
-      .then((data) => {
+    const userId = localStorage.getItem("clientId") || localStorage.getItem("clientid");
+
+    if (!userId) {
+      if (isMounted) {
+        setError("Brak autoryzacji. Zaloguj się ponownie.");
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    axios
+      .post(
+        "http://localhost:5000/api/tests/getExamsResults",
+        { clientId: userId },
+        { withCredentials: true }
+      )
+      .then((response) => {
         if (isMounted) {
-          const sortedData = data.sort(
-            (a, b) => new Date(b.date) - new Date(a.date),
+          const examList = response.data.Exams || [];
+          
+          const formattedExams = examList.map((exam) => ({
+            id: exam.id,
+            date: exam.data_egzaminu,
+            status: exam.liczba_punktow >= 68 ? "passed" : "failed",
+          }));
+
+          const sortedData = formattedExams.sort(
+            (a, b) => new Date(b.date) - new Date(a.date)
           );
           setExams(sortedData);
         }
       })
       .catch(() => {
-        if (isMounted) setError("Błąd pobierania danych.");
+        if (isMounted) setError("Błąd pobierania danych z serwera.");
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -73,9 +64,10 @@ export default function Tests() {
       <section>
         {isLoading && <p className="slots-loading">Ładowanie wyników...</p>}
         {error && <p className="error">{error}</p>}
-        {exams.map((exam, index) => (
+        {exams.map((exam) => (
           <ExamBlock
-            key={index}
+            key={exam.id}
+            id={exam.id}
             date={new Date(exam.date).toLocaleString("pl-PL")}
             status={exam.status}
           />

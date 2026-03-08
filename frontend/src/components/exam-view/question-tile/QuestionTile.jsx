@@ -1,7 +1,12 @@
 import "./QuestionTile.css";
 
-export default function QuestionTile({ questionIndex, isCorrect }) {
+export default function QuestionTile({ questionIndex, isCorrect, onClick, isActive }) {
   return (
-    <p className={`tile ${isCorrect ? "passed" : "failed"}`}>{questionIndex}</p>
+    <p 
+      onClick={onClick} 
+      className={`tile ${isCorrect ? "passed" : "failed"} ${isActive ? "active" : ""}`}
+    >
+      {questionIndex}
+    </p>
   );
 }
