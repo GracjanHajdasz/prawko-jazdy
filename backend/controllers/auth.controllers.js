@@ -48,6 +48,8 @@ exports.login = async (req, res) => {
       password,
     });
 
+    console.log("DEBUG - Odpowiedź od Pythona:", result);
+
     if (!result || !result.data || !result.data.Msg) {
       throw new Error("Brak prawidłowej odpowiedzi z bazy podczas logowania");
     }

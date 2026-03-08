@@ -1,0 +1,9 @@
+.tile {
+  border: 2px solid;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+}

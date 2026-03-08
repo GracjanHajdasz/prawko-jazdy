@@ -5,7 +5,7 @@ const pythonApi = axios.create({
     baseURL: process.env.PYTHON_SERVICE_URL,
     timeout: 5000,
     headers: {
-        'x-internal-secret': process.env.API_SECRET 
+        'x-api-key': process.env.API_KEY
     }
 });
 
@@ -29,7 +29,10 @@ const endpoints = {
     "fetch_profile": "/get-user-data",
     "fetch_bookings": "/getBookings",
     "edit_bookings": "/editBookings",
-    "get_exam": "/getExam"
+    "get_exam": "/getExam",
+    "get_exams_results": "/getExamsResults",
+    "save_exam_results": "/saveExamResults",
+    "get_exam_questions": "/getExamQuestions"
 };
 
 exports.parseError = (error) => {
@@ -58,8 +61,12 @@ exports.parseError = (error) => {
 exports.callPython = async (payload) => {
     try {
         const endpoint = endpoints[payload.query_type];
-        
-        const { query_type, ...dataToSend } = payload;
+
+        if (!endpoint) {
+            return { status: 404, data: { error: "Endpoint nie został zdefiniowany w serwisie Node.js" } };
+        }
+
+        const dataToSend = payload.data || {};
 
         const response = await pythonApi.post(endpoint, dataToSend);
 
@@ -67,6 +74,7 @@ exports.callPython = async (payload) => {
 
     } catch (error) {
         if (error.response) {
+            console.log(JSON.stringify(error.response.data, null, 2));
             return { status: error.response.status, data: error.response.data };
         } else if (error.code === 'ECONNREFUSED') {
             return { status: 503, data: { error: "Python service is offline" } };
