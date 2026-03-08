@@ -19,6 +19,9 @@ import random as rd
 from psycopg.rows import dict_row
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+import smtplib
+from email.message import EmailMessage
+import secrets
 
 
 logging.basicConfig(
@@ -79,29 +82,36 @@ def error_db(error : Exception):
             raise HTTPException(status_code=500, detail=f"Błąd bazy danych: {error.__class__.__name__}")
       raise HTTPException(status_code=500, detail="Nieznany błąd serwera")
 
-def retry(function):
-    return function
+def generateCode():
+    alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    code = "".join(secrets.choice(alphabet) for _ in range (10))
+    return code
 
+polish_time = datetime.now(ZoneInfo("Europe/Warsaw")).replace(tzinfo=None)
 
 @app.post("/register")
 def register(data : dict):
     clientid = data["clientid"]
     password = data["password"]
+    code = data["code"]
     password_hash = hash_password(password)
-    polish_time = datetime.now(ZoneInfo("Europe/Warsaw")).replace(tzinfo=None)
     try:
         with pool.connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("Insert Into dane_logowania (client_id,password_hash,created_at) Values (%s, %s, %s)", (clientid,password_hash,polish_time))
-            conn.commit()
-            return {"Msg": "Rejestracja pomyślna"}
-    except UniqueViolation:
-        conn.rollback()
-        return {"Msg": "Użytkownik już istnieje"}
+                cur.execute("Select code_hash from dane_logowania where client_id =%s and wygasniecie_kodu >= NOW()", (clientid,))
+                results = cur.fetchone()
+                if (results == None):
+                    return {"Msg" : "Niepoprawne dane lub kod wygasł"}
+                code_hash = results[0]
+                if (not(verify_password(code, code_hash))):
+                    return {"Msg" : "Niepoprawny kod"}
+                cur.execute("Update dane_logowania Set password_hash = %s, wygasniecie_kodu = NOW() where client_id = %s", (password_hash, clientid))
+                conn.commit()
     except Exception as e:
         logger.exception("Error in /register clientid=%s", clientid)
         conn.rollback()
         error_db(e)
+    return {"Msg" : "Wprowadzono zmiany pomyślnie"}
 
 @app.post("/login")
 def login(data : dict):
@@ -125,10 +135,11 @@ def login(data : dict):
 @app.post("/editBookings")
 def editBookings(data : dict):
      tabela_dat = data["data"]
+     clientid = data["clientid"]
      try:
         with pool.connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("Update kalendarz Set zajete = TRUE where data = ANY(%s) and zajete = FALSE", (tabela_dat,))
+                cur.execute("""Update kalendarz Set zajete = TRUE, clientid = %s, status = 'PLANNED' where data = ANY(%s) and zajete = FALSE""", (clientid,tabela_dat))
                 updated_rows = cur.rowcount
             if updated_rows == len(tabela_dat):
                 conn.commit()
@@ -143,12 +154,16 @@ def editBookings(data : dict):
 @app.post("/getBookings")
 def getBookings(data:dict):
     data_ = data["data"]
+    clientid = data["clientid"]
     try:
         with pool.connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("Select data, zajete From kalendarz where data::date = %s", (data_,))
                 rows = cur.fetchall()
-            return {"Msg": [{"data": dt.strftime("%Y-%m-%d %H:%M:%S"),"status": "available" if not zajete else "booked"}for dt, zajete in rows]}
+                cur.execute("Select SUM(liczba_godzin) from faktury where clientid = %s and paid = True",(clientid,))
+                sum = cur.fetchone()
+                print(sum)
+            return {"Msg": [{"data": dt.strftime("%Y-%m-%d %H:%M:%S"),"status": "available" if not zajete else "booked"}for dt, zajete in rows], "AvailableHours":sum[0]}
     except Exception as e:
         error_db(e)
 
@@ -240,5 +255,128 @@ def getExamQuestions(data:dict):
     df3 = df3.drop(columns=["zakres_struktury"])
     df3["wyjasnienie"]=df3["wyjasnienie"].where(pd.notnull, "NI MA NIC")
     return {"podstawowe":[df2.to_dict(orient="records")], "specjalistyczne":[df3.to_dict(orient="records")]}
+@app.post("/addNewStudent")
+def addNewStudent(data : dict):
+    pkk, pesel,imie, nazwisko, rola, mail = data["pkk"], data["pesel"], data["imie"], data["nazwisko"], data["rola"], data["mail"]
+    code = generateCode()
+    code_hash = hash_password(code)
+    data_wygasniecia = pd.Timestamp.now() + pd.Timedelta(hours=24)
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""Insert into dane_logowania (client_id, code_hash,"Rola",imie,nazwisko,pesel,wygasniecie_kodu, created_at, mail ) Values(%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                             (pkk,code_hash,rola,imie,nazwisko,pesel,data_wygasniecia,polish_time, mail))
+                conn.commit()
+    except UniqueViolation:
+        conn.rollback()
+        return {"Msg":"Użytkownik o podanym PKK już istnieje"}
+    except Exception as e:
+        conn.rollback()
+        error_db(e)
+    if(len(mail)==0):
+        return {"Msg" : "Nie wysłano maila z powodu braku jego podania"}
+    msg = EmailMessage()
+    msg["From"] = "SuperSzkola@poczta.com"
+    msg["To"] = mail
+    msg["Subject"] = "Masz hasło"
+    msg.set_content(f"Twoje hasło to: {code}. Ważne będzie przez 24h")
+    with smtplib.SMTP("localhost", 1025) as smtp:
+        smtp.send_message(msg)
+    return {"Msg":"Mail wysłany"}
+@app.post("/displayStudents")
+def displayStudents(data : dict):
+    strona = data["od"]
+    limit = 50
+    offset = (strona - 1) * limit
+    try:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                cur.execute("""Select client_id, "Rola", imie, nazwisko, pesel, wygasniecie_kodu from dane_logowania order by created_at desc limit 50 offset %s""",(offset,))
+                rows = cur.fetchall()
+    except Exception as e:
+        error_db(e)
+    df1 = pd.DataFrame(rows)
+    df1['wygasniecie_kodu'] = df1['wygasniecie_kodu'].astype("str")
+    df1["wygasniecie_kodu"] = df1["wygasniecie_kodu"].replace("T", " ")
+    df1 = df1.fillna('')
+    return {"students" : [df1.to_dict(orient="records")]}
+@app.post("/editStudent")
+def  editStudent(data : dict):
+    clientid, rola, imie, nazwisko, pesel= data["clientid"], data["Rola"], data["imie"], data["nazwisko"], data["pesel"]
+    new_clientid = data.get("newclientid", "")
+    if len(new_clientid) == 0:
+        new_clientid = clientid
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""Update dane_logowania Set client_id = %s, "Rola" = %s,imie = %s, nazwisko = %s, pesel = %s where client_id = %s """,(new_clientid,rola, imie, nazwisko, pesel, clientid))
+                updated_rows = cur.rowcount
+                conn.commit()
+    except Exception as e:
+        error_db(e)
+    if updated_rows > 0:
+        return {"Msg" : "wprowadzono zmiany pomyślnie"}
+    else:
+        return {"Msg" : "Brak tego klienta"}
+@app.post("/generateNewCode")
+def generateNewCode(data : dict):
+    code = generateCode()
+    code_hash = hash_password(code)
+    clientid = data["clientid"]
+    data_wygasniecia = polish_time + pd.Timedelta(hours=24)
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""Update dane_logowania Set code_hash = %s, wygasniecie_kodu = %s where client_id = %s RETURNING mail""",(code_hash, data_wygasniecia, clientid))
+                results = cur.fetchone()
+            conn.commit()
+    except Exception as e:
+        error_db(e)
+    if(len(results) == 0):
+        return {"Msg":"Nie wysłano maila z powodu braku jego podania"}
+    mail = results[0]
+    msg = EmailMessage()
+    msg["From"] = "SuperSzkola@poczta.com"
+    msg["To"] = mail
+    msg["Subject"] = "Masz hasło"
+    msg.set_content(f"Twoje hasło to: {code}. Ważne będzie przez 24h")
+    with smtplib.SMTP("localhost", 1025) as smtp:
+        smtp.send_message(msg)
+    return {"Msg":"Mail wysłany"}
+
+@app.post("/getStudentsLessons")
+def getStudentsLessons(data:dict):
+    clientid = data["clientid"]
+    try:
+        with pool.connection() as conn:
+            with conn.cursor(row_factory=dict_row) as cur:
+                cur.execute("""Select data, status from kalendarz where clientid = %s order by data desc""", (clientid,))
+                rows = cur.fetchall()
+                cur.execute("Select SUM(liczba_godzin) from faktury where clientid = %s and paid = True",(clientid,))
+                sum = cur.fetchone()
+    except Exception as e:
+        error_db(e)
+    df = pd.DataFrame(rows)
+    df2 = df
+    df2 = df2[df2["status"] == "FINISHED"]
+    df["data"] = df["data"].astype('str')
+    df["data"] = df["data"].replace('T', ' ')
+    return {"Lessons":df.to_dict(orient='records'), "FinishedLessons":len(df2), "AvailableHours" : sum["sum"]}
+@app.post("/newInvoice")
+def newInvoice(data:dict):
+    clientid,liczba_godzin,kwota_za_h = data["clientid"], data["liczba_godzin"], data["kwota_za_h"]
+    kwota_do_zaplaty = liczba_godzin * kwota_za_h
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("Select COUNT(*) from dane_logowania where client_id = %s", (clientid,))
+                if(cur.fetchone()[0] == 0):
+                    return {"Msg" : "Podany klient nie istnieje"}
+                cur.execute("Insert into faktury (clientid, liczba_godzin, kwota_do_zaplaty, created_at, paid) Values(%s,%s,%s,%s, FALSE)",(clientid, liczba_godzin, kwota_do_zaplaty, polish_time))
+                conn.commit()
+    except Exception as e:
+        conn.rollback()
+        error_db(e)
+    return {"Msg" : "Faktura dodana pomyślnie"}
 if __name__ == "__main__":
     uvicorn.run(app, host=HOST, port=PORT)
