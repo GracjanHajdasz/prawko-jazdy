@@ -4,20 +4,21 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   try {
-    const { clientid, password } = req.body;
+    const { clientid, password, code } = req.body;
 
-    if (!clientid || !password) {
+    if (!clientid || !password || !code) {
       return res.status(400).json({
-        error: "Brak numeru użytkownika lub hasła",
+        error: "Brak wymaganych danych",
       });
     }
 
-    console.log(`Próba rejestracji użytkownika: ${clientid}`);
-
     const result = await callPython({
       query_type: "register",
-      clientid,
-      password,
+      data: {
+        clientid,
+        password,
+        code
+      }
     });
 
     if (!result) {
@@ -44,11 +45,11 @@ exports.login = async (req, res) => {
 
     const result = await callPython({
       query_type: "login",
-      clientid,
-      password,
+      data: {
+        clientid,
+        password,
+      }
     });
-
-    console.log("DEBUG - Odpowiedź od Pythona:", result);
 
     if (!result || !result.data || !result.data.Msg) {
       throw new Error("Brak prawidłowej odpowiedzi z bazy podczas logowania");
@@ -60,7 +61,7 @@ exports.login = async (req, res) => {
         .json({ error: result.data.Msg });
     }
 
-    const payload = { clientid: clientid };
+    const payload = { clientid };
     const accessToken = generateToken(payload, '7d');
 
     res.cookie('authToken', accessToken, {
@@ -116,12 +117,14 @@ exports.getUserData = async (req, res) => {
 
     const result = await callPython({
         query_type: "fetch_profile",
-        clientid: user.clientid
+        data: {
+            clientid: user.clientid
+        }
     });
 
     if (!result) {
-            throw new Error("Brak prawidłowejodpowiedzi z bazy podczas pobierania danych użytkownika");
-        }
+        throw new Error("Brak prawidłowej odpowiedzi z bazy podczas pobierania danych użytkownika");
+    }
 
     res.status(result.status).json(result.data);
 };
