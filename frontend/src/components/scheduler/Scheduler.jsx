@@ -11,6 +11,8 @@ export default function Scheduler({ triggerPopUp }) {
   const [error, setError] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  const clientid = localStorage.getItem("clientid");
+
   const fetchSlots = React.useCallback(async () => {
     if (!date) return;
     
@@ -24,7 +26,7 @@ export default function Scheduler({ triggerPopUp }) {
           'Content-Type': 'application/json',
         },
         credentials: 'include', 
-        body: JSON.stringify({ data: date }),
+        body: JSON.stringify({ data: date, clientid: clientid }),
       });
 
       if (!response.ok) {
@@ -94,7 +96,7 @@ export default function Scheduler({ triggerPopUp }) {
           "Content-Type": "application/json",
         },
         credentials: 'include', 
-        body: JSON.stringify({ data: formattedData }),
+        body: JSON.stringify({ data: formattedData, clientid: clientid }),
       });
 
       const result = await response.json();
