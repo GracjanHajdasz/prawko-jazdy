@@ -20,6 +20,7 @@ import Footer from "./components/footer/Footer.jsx";
 import UserPanel from "./components/user-panel/UserPanel.jsx";
 import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
 import ExamView from "./components/exam-view/ExamView.jsx";
+import AdminPanel from "./components/admin-panel/AdminPanel.jsx";
 
 const AppContext = createContext(null);
 
@@ -152,6 +153,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ExamView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin",
+        element: (
+          <ProtectedRoute>
+            <AdminPanel />
           </ProtectedRoute>
         ),
       },
