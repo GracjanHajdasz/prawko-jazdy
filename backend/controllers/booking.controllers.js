@@ -11,15 +11,15 @@ const checkDate = (date) => {
 
 exports.editBookings = async (req, res) => {
     try {
-        const { data } = req.body;
+        const { data, clientid } = req.body;
 
-        if (!data) {
-            return res.status(400).json({ error: "Brak wymaganych danych rezerwacji" });
+        if (!data || !clientid) {
+            return res.status(400).json({ error: "Brak wymaganych danych rezerwacji lub ID klienta" });
         }
 
         const result = await callPython({
             query_type: "edit_bookings",
-            data: data
+            data: { data: data, clientid: clientid }  
         });
 
         if (!result) {
@@ -35,10 +35,10 @@ exports.editBookings = async (req, res) => {
 
 exports.getBookings = async (req, res) => {
     try {
-        const { data } = req.body;
+        const { data, clientid } = req.body;
 
-        if (!data) {
-            return res.status(400).json({ error: "Brak danych rezerwacji (oczekiwany klucz 'data')" });
+        if (!data || !clientid) {
+            return res.status(400).json({ error: "Brak danych rezerwacji lub ID klienta" });
         }
 
         if (!checkDate(data)) {
@@ -50,7 +50,7 @@ exports.getBookings = async (req, res) => {
 
         const result = await callPython({
             query_type: "fetch_bookings",
-            data: data 
+            data: { data: data, clientid: clientid }
         });
 
         if (!result) {
