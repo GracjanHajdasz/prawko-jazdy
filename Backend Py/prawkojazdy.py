@@ -105,7 +105,7 @@ def register(data : dict):
                 code_hash = results[0]
                 if (not(verify_password(code, code_hash))):
                     return {"Msg" : "Niepoprawny kod"}
-                cur.execute("Update dane_logowania Set password_hash = %s, wygasniecie_kodu = NOW() where client_id = %s", (password_hash, clientid))
+                cur.execute("Update dane_logowania Set password_hash = %s, wygasniecie_kodu = %s where client_id = %s", (password_hash,polish_time ,clientid))
                 conn.commit()
     except Exception as e:
         logger.exception("Error in /register clientid=%s", clientid)
@@ -120,13 +120,15 @@ def login(data : dict):
      try:
         with pool.connection() as conn:
             with conn.cursor() as cur:
-                  cur.execute("""Select dl."password_hash", dl."Rola" from dane_logowania dl where client_id = %s""", (clientid,))
+                  cur.execute("""Select dl."password_hash", dl."Rola", active_account from dane_logowania dl where client_id = %s""", (clientid,))
                   row = cur.fetchone()
             if row is None:
                   return {"Msg":"Użytkownik nie istnieje"}
             stored_hash = row[0]
             if not verify_password(password, stored_hash):
                   return {"Msg":"Niepoprawne hasło"}
+            if(not(row[2])):
+                return {"Msg":"Twoje konto nie zostało aktywowane."}
             return {"Msg": "Logowanie pomyślne","Rola":row[1]}
      except Exception as e:
         logger.exception("Error in /login clientid=%s", clientid)
@@ -264,8 +266,8 @@ def addNewStudent(data : dict):
     try:
         with pool.connection() as conn:
             with conn.cursor() as cur:
-                cur.execute("""Insert into dane_logowania (client_id, code_hash,"Rola",imie,nazwisko,pesel,wygasniecie_kodu, created_at, mail ) Values(%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                             (pkk,code_hash,rola,imie,nazwisko,pesel,data_wygasniecia,polish_time, mail))
+                cur.execute("""Insert into dane_logowania (client_id, code_hash,"Rola",imie,nazwisko,pesel,wygasniecie_kodu, created_at, mail, active_account) Values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                             (pkk,code_hash,rola,imie,nazwisko,pesel,data_wygasniecia,polish_time, mail, True))
                 conn.commit()
     except UniqueViolation:
         conn.rollback()
