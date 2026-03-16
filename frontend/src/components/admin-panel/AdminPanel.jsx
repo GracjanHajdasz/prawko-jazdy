@@ -1,9 +1,10 @@
 import { useState } from "react";
 import "./AdminPanel.css";
 import Calendar from "./content/Calendar";
-import Students from "./content/Students";
+import Students from "./content/students/Students";
 import Instructors from "./content/Instructors";
 import Invoices from "./content/Invoices";
+import EditStudent from "./content/students/EditStudent";
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState("calendar");

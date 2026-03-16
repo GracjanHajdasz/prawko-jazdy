@@ -55,4 +55,10 @@
   margin: 5rem;
   flex: 1;
   margin-bottom: 16vh;
+  overflow: scroll;
+}
+
+td{
+  padding: 10px;
+  border: 1px solid black
 }
