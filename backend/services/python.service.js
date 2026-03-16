@@ -32,7 +32,13 @@ const endpoints = {
     "get_exam": "/getExam",
     "get_exams_results": "/getExamsResults",
     "save_exam_results": "/saveExamResults",
-    "get_exam_questions": "/getExamQuestions"
+    "get_exam_questions": "/getExamQuestions",
+    "addNewStudent": "/addNewStudent",
+    "displayStudents": "/displayStudents",
+    "editStudent": "/editStudent",
+    "generateNewCode": "/generateNewCode",
+    "getStudentsLessons": "/getStudentsLessons",
+    "newInvoice": "/newInvoice",
 };
 
 exports.parseError = (error) => {
