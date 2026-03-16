@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../../AdminPanel.css";
 import EditStudent from "./EditStudent";
+import AddStudent from "./AddStudent";
 
 export default function Students() {
   const [users, setUsers] = useState([]);
-  const [isFormVisable, setIsFormVisable] = useState(false);
+  const [isEditFormVisable, setIsEditFormVisable] = useState(false);
+  const [isAddFormVisable, setIsAddFormVisable] = useState(false);
   const [activeUser, setActiveUser] = useState(null);
   const [refreshTable, setRefreshTable] = useState(false);
 
@@ -30,10 +32,16 @@ export default function Students() {
   return (
     <>
       <EditStudent
-        isFormVisable={isFormVisable}
-        setIsFormVisable={setIsFormVisable}
+        isFormVisable={isEditFormVisable}
+        setIsFormVisable={setIsEditFormVisable}
         activeUser={activeUser}
         setActiveUser={setActiveUser}
+        setRefreshTable={setRefreshTable}
+        refreshTable={refreshTable}
+      />
+      <AddStudent
+        isFormVisable={isAddFormVisable}
+        setIsFormVisable={setIsAddFormVisable}
         setRefreshTable={setRefreshTable}
         refreshTable={refreshTable}
       />
@@ -57,7 +65,7 @@ export default function Students() {
               <td>
                 <button
                   onClick={() => {
-                    setIsFormVisable(true);
+                    setIsEditFormVisable(true);
                     setActiveUser({
                       imie: user.imie,
                       nazwisko: user.nazwisko,
@@ -75,6 +83,14 @@ export default function Students() {
           ))}
         </tbody>
       </table>
+      <button
+        className="btn"
+        onClick={() => {
+          setIsAddFormVisable(true);
+        }}
+      >
+        dodaj kursanta
+      </button>
     </>
   );
 }

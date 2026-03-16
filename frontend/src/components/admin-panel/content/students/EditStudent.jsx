@@ -32,13 +32,12 @@ export default function EditStudent({
 
   return (
     <div className="edit-student-form">
+      <h1>Edytuj kursanta</h1>
       <p>imie</p>
       <input
         type="text"
         value={activeUser.imie}
-        onChange={(e) =>
-          setActiveUser({ ...activeUser, imie: e.target.value })
-        }
+        onChange={(e) => setActiveUser({ ...activeUser, imie: e.target.value })}
       />
       <p>nazwisko</p>
       <input
@@ -60,9 +59,7 @@ export default function EditStudent({
       <input
         type="text"
         value={activeUser.pkk}
-        onChange={(e) =>
-          setActiveUser({ ...activeUser, pkk: e.target.value })
-        }
+        onChange={(e) => setActiveUser({ ...activeUser, pkk: e.target.value })}
       />
       <button
         onClick={() => {
