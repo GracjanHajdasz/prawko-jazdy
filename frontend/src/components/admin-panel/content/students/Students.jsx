@@ -7,6 +7,7 @@ export default function Students() {
   const [users, setUsers] = useState([]);
   const [isFormVisable, setIsFormVisable] = useState(false);
   const [activeUser, setActiveUser] = useState(null);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   useEffect(() => {
     axios
@@ -24,7 +25,7 @@ export default function Students() {
       .catch((error) => {
         console.error("Error fetching students:", error);
       });
-  }, []);
+  }, [refreshTable]);
 
   return (
     <>
@@ -33,6 +34,8 @@ export default function Students() {
         setIsFormVisable={setIsFormVisable}
         activeUser={activeUser}
         setActiveUser={setActiveUser}
+        setRefreshTable={setRefreshTable}
+        refreshTable={refreshTable}
       />
       <table className="students-table">
         <thead>

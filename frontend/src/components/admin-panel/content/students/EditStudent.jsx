@@ -1,12 +1,30 @@
+import { useState } from "react";
 import "./Students.css";
+import axios from "axios";
 
 export default function EditStudent({
   isFormVisable,
   setIsFormVisable,
   activeUser,
   setActiveUser,
+  setRefreshTable,
+  refreshTable,
 }) {
-  if (isFormVisable)
+  const [saveChanges, setSaveChanges] = useState(false);
+  if (isFormVisable) {
+    if (saveChanges === true) {
+      axios.post("http://localhost:5000/api/students/editStudent", {
+        clientid: activeUser.pkk,
+        Rola: "USER",
+        imie: activeUser.imie,
+        nazwisko: activeUser.nazwisko,
+        pesel: activeUser.pesel,
+        newclientid: activeUser.pkk,
+      });
+      setIsFormVisable(false);
+      setRefreshTable(!refreshTable);
+    }
+
     return (
       <div className="edit-student-form">
         <p>imie</p>
@@ -49,8 +67,14 @@ export default function EditStudent({
         >
           wyjdz
         </button>
-        <button>zapisz</button>
+        <button
+          onClick={() => {
+            setSaveChanges(true);
+          }}
+        >
+          zapisz
+        </button>
       </div>
     );
-  else return null;
+  } else return null;
 }
