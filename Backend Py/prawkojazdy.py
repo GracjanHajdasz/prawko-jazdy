@@ -293,7 +293,7 @@ def displayStudents(data : dict):
     try:
         with pool.connection() as conn:
             with conn.cursor(row_factory=dict_row) as cur:
-                cur.execute("""Select client_id, "Rola", imie, nazwisko, pesel, wygasniecie_kodu from dane_logowania order by created_at desc limit 50 offset %s""",(offset,))
+                cur.execute("""Select client_id, "Rola", imie, nazwisko, pesel, wygasniecie_kodu,mail,active_account from dane_logowania order by created_at desc limit 50 offset %s""",(offset,))
                 rows = cur.fetchall()
     except Exception as e:
         error_db(e)
