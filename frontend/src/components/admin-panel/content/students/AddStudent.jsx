@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function AddStudent({
   isFormVisable,
-  setIsAddFormVisable,
+  setIsFormVisable,
   setRefreshTable,
   refreshTable,
 }) {
@@ -41,7 +41,7 @@ export default function AddStudent({
         mail: newUser.mail,
       })
       .then(() => {
-        setIsAddFormVisable(false);
+        setIsFormVisable(false);
         setRefreshTable(!refreshTable);
       })
       .catch((error) => {
@@ -89,7 +89,7 @@ export default function AddStudent({
       />
       <button
         onClick={() => {
-          setIsAddFormVisable(false);
+          setIsFormVisable(false);
           setNewUser(emptyUser);
         }}
       >
