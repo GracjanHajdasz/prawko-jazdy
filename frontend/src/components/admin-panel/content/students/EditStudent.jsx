@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./Students.css";
 import axios from "axios";
 
@@ -9,12 +10,14 @@ export default function EditStudent({
   setRefreshTable,
   refreshTable,
 }) {
+  const [oldPKK, setOldPKK] = useState(activeUser?.pkk ?? "");
+
   if (!isFormVisable) return null;
 
   const handleSave = () => {
     axios
       .post("http://localhost:5000/api/students/editStudent", {
-        clientid: activeUser.pkk,
+        clientid: oldPKK,
         Rola: "USER",
         imie: activeUser.imie,
         nazwisko: activeUser.nazwisko,
@@ -59,7 +62,9 @@ export default function EditStudent({
       <input
         type="text"
         value={activeUser.pkk}
-        onChange={(e) => setActiveUser({ ...activeUser, pkk: e.target.value })}
+        onChange={(e) => {
+          setActiveUser({ ...activeUser, pkk: e.target.value });
+        }}
       />
       <button
         onClick={() => {

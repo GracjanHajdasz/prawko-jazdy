@@ -3,11 +3,13 @@ import axios from "axios";
 import "../../AdminPanel.css";
 import EditStudent from "./EditStudent";
 import AddStudent from "./AddStudent";
+import StudentsLessons from "./StudentsLessons";
 
 export default function Students() {
   const [users, setUsers] = useState([]);
   const [isEditFormVisable, setIsEditFormVisable] = useState(false);
   const [isAddFormVisable, setIsAddFormVisable] = useState(false);
+  const [isLessonsVisable, setIsLessonsVisable] = useState(false);
   const [activeUser, setActiveUser] = useState(null);
   const [refreshTable, setRefreshTable] = useState(false);
 
@@ -45,6 +47,12 @@ export default function Students() {
         setRefreshTable={setRefreshTable}
         refreshTable={refreshTable}
       />
+
+      <StudentsLessons
+        isLessonsVisable={isLessonsVisable}
+        setIsLessonsVisable={setIsLessonsVisable}
+        activeUser={activeUser}
+      />
       <table className="students-table">
         <thead>
           <tr>
@@ -77,7 +85,16 @@ export default function Students() {
                 >
                   edytuj
                 </button>
-                <button>usun</button>
+                <button className="btn">usun</button>
+                <button
+                  onClick={() => {
+                    setIsLessonsVisable(true);
+                    setActiveUser({ pkk: user.numerPKK });
+                  }}
+                  className="btn"
+                >
+                  info
+                </button>
               </td>
             </tr>
           ))}
