@@ -16,8 +16,9 @@ export default function StudentsLessons({
       .post("http://localhost:5000/api/students/getStudentsLessons", {
         clientid: activeUser.pkk,
       })
-      .then(() => {
-        setLessons(response.data.lessons);
+      .then((response) => {
+        console.log(response.data);
+        setLessons(response.data.Lessons);
       })
       .catch((error) => {
         console.error("Error fetching lessons:", error);
@@ -29,11 +30,19 @@ export default function StudentsLessons({
     <div className="edit-student-form">
       <h1>lekcje kursanta</h1>
       <div className="lessons">
-        {lessons.map((lesson) => {
-          <p>{lesson.data}</p>;
-        })}
+        {lessons.length === 0 && <p>Brak lekcji</p>}
+        {lessons.map((lesson) => (
+          <p key={lesson.data}>{lesson.data}</p>
+        ))}
       </div>
-      <button onClick={() => setIsLessonsVisable(false)}>wyjdz</button>
+      <button
+        onClick={() => {
+          setIsLessonsVisable(false);
+          setLessons([]);
+        }}
+      >
+        wyjdz
+      </button>
     </div>
   );
 }
