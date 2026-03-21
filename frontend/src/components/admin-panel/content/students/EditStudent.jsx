@@ -9,12 +9,13 @@ export default function EditStudent({
   setActiveUser,
   setRefreshTable,
   refreshTable,
+  oldPKK,
 }) {
-  const [oldPKK, setOldPKK] = useState(activeUser?.pkk ?? "");
-
   if (!isFormVisable) return null;
 
   const handleSave = () => {
+    console.log("oldPKK:", oldPKK);
+    console.log("newPKK:", activeUser.pkk);
     axios
       .post("http://localhost:5000/api/students/editStudent", {
         clientid: oldPKK,

@@ -12,6 +12,7 @@ export default function Students() {
   const [isLessonsVisable, setIsLessonsVisable] = useState(false);
   const [activeUser, setActiveUser] = useState(null);
   const [refreshTable, setRefreshTable] = useState(false);
+  const [oldPKK, setOldPKK] = useState();
 
   useEffect(() => {
     axios
@@ -40,6 +41,7 @@ export default function Students() {
         setActiveUser={setActiveUser}
         setRefreshTable={setRefreshTable}
         refreshTable={refreshTable}
+        oldPKK={oldPKK}
       />
       <AddStudent
         isFormVisable={isAddFormVisable}
@@ -80,6 +82,7 @@ export default function Students() {
                       pesel: user.pesel,
                       pkk: user.numerPKK,
                     });
+                    setOldPKK(user.numerPKK);
                   }}
                   className="btn"
                 >
