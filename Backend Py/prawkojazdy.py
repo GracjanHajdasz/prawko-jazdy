@@ -360,10 +360,12 @@ def getStudentsLessons(data:dict):
         error_db(e)
     df = pd.DataFrame(rows)
     df2 = df
+    if(len(df)==0):
+            return {"Lessons":None, "FinishedLessons":len(df2), "AvailableHours" : 0 if sum["sum"] is None else sum["sum"]}
     df2 = df2[df2["status"] == "FINISHED"]
     df["data"] = df["data"].astype('str')
     df["data"] = df["data"].replace('T', ' ')
-    return {"Lessons":df.to_dict(orient='records'), "FinishedLessons":len(df2), "AvailableHours" : sum["sum"]}
+    return {"Lessons":df.to_dict(orient='records'), "FinishedLessons":len(df2), "AvailableHours" :  0 if sum["sum"] is None else sum["sum"]}
 @app.post("/newInvoice")
 def newInvoice(data:dict):
     clientid,liczba_godzin,kwota_za_h = data["clientid"], data["liczba_godzin"], data["kwota_za_h"]
