@@ -3,7 +3,7 @@ import "./AdminPanel.css";
 import Calendar from "./content/Calendar";
 import Students from "./content/students/Students";
 import Instructors from "./content/Instructors";
-import Invoices from "./content/Invoices";
+import Invoices from "./content/invoices/Invoices.jsx";
 import EditStudent from "./content/students/EditStudent";
 
 export default function AdminPanel() {
