@@ -21,6 +21,7 @@ import UserPanel from "./components/user-panel/UserPanel.jsx";
 import PageNotFound from "./components/pagenotfound/PageNotFound.jsx";
 import ExamView from "./components/exam-view/ExamView.jsx";
 import AdminPanel from "./components/admin-panel/AdminPanel.jsx";
+import Calendar from "./components/calendar/Calendar.jsx";
 
 const AppContext = createContext(null);
 
@@ -113,6 +114,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <MainPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/calendar",
+        element: (
+          <ProtectedRoute>
+            <Calendar />
           </ProtectedRoute>
         ),
       },
