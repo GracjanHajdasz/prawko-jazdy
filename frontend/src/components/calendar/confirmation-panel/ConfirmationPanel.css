@@ -1,0 +1,44 @@
+.confirmation-panel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+  font-family: sans-serif;
+  min-width: 280px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.confirmation-panel p {
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.confirmation-panel__slots {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Scrollbar styling */
+.confirmation-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.confirmation-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.confirmation-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.confirmation-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

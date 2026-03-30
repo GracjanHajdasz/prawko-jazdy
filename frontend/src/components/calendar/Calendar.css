@@ -1,6 +1,17 @@
+.calendar-container {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .calendar {
   width: 500px;
-  margin: 0 auto;
+  margin: 0;
   font-family: sans-serif;
   background-color: white;
 }

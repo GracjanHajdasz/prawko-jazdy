@@ -1,6 +1,7 @@
 import "./Calendar.css";
-import { useState } from "react";
-import "./Calendar.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import ConfirmationPanel from "./confirmation-panel/ConfirmationPanel.jsx";
 
 const MONTHS = [
   "Styczeń",
@@ -25,6 +26,10 @@ export default function Calendar() {
     month: today.getMonth(),
   });
   const [selected, setSelected] = useState(null);
+  const [lessons, setLessons] = useState([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const clientid = localStorage.getItem("clientid");
 
   const { year, month } = view;
   const firstDow = (() => {
@@ -61,69 +66,92 @@ export default function Calendar() {
     cells.push({ day: d, type: "other" });
   }
 
+  useEffect(() => {
+    if (!selected || !clientid) return;
+
+    const formattedDate = `${selected.year}-${String(selected.month + 1).padStart(2, "0")}-${String(selected.day).padStart(2, "0")}`;
+
+    axios
+      .post("http://localhost:5000/api/bookings/getBookings", {
+        data: formattedDate,
+        clientid: clientid,
+      })
+      .then((response) => {
+        console.log(response.data);
+        setLessons(response.data);
+      })
+      .catch((error) =>
+        console.error("Błąd rezerwacji:", error.response?.data || error),
+      );
+  }, [selected, clientid]);
+
   return (
-    <div className="calendar">
-      <div className="calendar__header">
-        <button className="calendar__nav-btn" onClick={prevMonth}>
-          ‹
-        </button>
-        <strong className="calendar__title">
-          {MONTHS[month]} {year}
-        </strong>
-        <button className="calendar__nav-btn" onClick={nextMonth}>
-          ›
-        </button>
-      </div>
+    <div className="calendar-container">
+      <div className="calendar">
+        <div className="calendar__header">
+          <button className="calendar__nav-btn" onClick={prevMonth}>
+            ‹
+          </button>
+          <strong className="calendar__title">
+            {MONTHS[month]} {year}
+          </strong>
+          <button className="calendar__nav-btn" onClick={nextMonth}>
+            ›
+          </button>
+        </div>
 
-      <div className="calendar__grid">
-        {DAYS.map((d) => (
-          <div key={d} className="calendar__day-name">
-            {d}
-          </div>
-        ))}
-        {cells.map((cell, i) => {
-          const isToday =
-            cell.type !== "other" &&
-            today.getFullYear() === year &&
-            today.getMonth() === month &&
-            today.getDate() === cell.day;
-          const isSel =
-            selected &&
-            selected.year === year &&
-            selected.month === month &&
-            selected.day === cell.day &&
-            cell.type !== "other";
-
-          const classes = [
-            "calendar__cell",
-            cell.type === "other" && "calendar__cell--other",
-            cell.type === "weekend" && "calendar__cell--weekend",
-            isToday && "calendar__cell--today",
-            isSel && "calendar__cell--selected",
-          ]
-            .filter(Boolean)
-            .join(" ");
-
-          return (
-            <div
-              key={i}
-              className={classes}
-              onClick={() =>
-                cell.type !== "other" &&
-                setSelected({ year, month, day: cell.day })
-              }
-            >
-              {cell.day}
+        <div className="calendar__grid">
+          {DAYS.map((d) => (
+            <div key={d} className="calendar__day-name">
+              {d}
             </div>
-          );
-        })}
-      </div>
+          ))}
+          {cells.map((cell, i) => {
+            const isToday =
+              cell.type !== "other" &&
+              today.getFullYear() === year &&
+              today.getMonth() === month &&
+              today.getDate() === cell.day;
+            const isSel =
+              selected &&
+              selected.year === year &&
+              selected.month === month &&
+              selected.day === cell.day &&
+              cell.type !== "other";
 
-      {selected && (
-        <p className="calendar__selected-label">
-          Wybrano: {selected.day} {MONTHS[selected.month]} {selected.year}
-        </p>
-      )}
+            const classes = [
+              "calendar__cell",
+              cell.type === "other" && "calendar__cell--other",
+              cell.type === "weekend" && "calendar__cell--weekend",
+              isToday && "calendar__cell--today",
+              isSel && "calendar__cell--selected",
+            ]
+              .filter(Boolean)
+              .join(" ");
+
+            return (
+              <div
+                key={i}
+                className={classes}
+                onClick={() => {
+                  cell.type !== "other" &&
+                    setSelected({ year, month, day: cell.day });
+                  setShowConfirmation(true);
+                }}
+              >
+                {cell.day}
+              </div>
+            );
+          })}
+        </div>
+
+        {selected && (
+          <p className="calendar__selected-label">
+            Wybrano: {selected.day} {MONTHS[selected.month]} {selected.year}
+          </p>
+        )}
+      </div>
+      {showConfirmation && <ConfirmationPanel lessons={lessons} />}
     </div>
   );
 }

@@ -13,40 +13,50 @@ export default function Scheduler({ triggerPopUp }) {
 
   const clientid = localStorage.getItem("clientid");
 
+  useEffect(() => {
+    console.log(date);
+  }, [date]);
+
   const fetchSlots = React.useCallback(async () => {
     if (!date) return;
-    
+
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/bookings/getBookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        "http://localhost:5000/api/bookings/getBookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ data: date, clientid: clientid }),
         },
-        credentials: 'include', 
-        body: JSON.stringify({ data: date, clientid: clientid }),
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Błąd połączenia z serwerem lub brak uprawnień');
+        throw new Error("Błąd połączenia z serwerem lub brak uprawnień");
       }
 
       const result = await response.json();
-      const rawData = Array.isArray(result) ? result : (result.Msg || result.data || []);
+      const rawData = Array.isArray(result)
+        ? result
+        : result.Msg || result.data || [];
 
-      const processedSlots = rawData.map(item => {
-        const timeOnly = item.data.split(' ')[1].substring(0, 5);
-        return {
-          time: timeOnly,
-          status: item.status,
-          fullDate: item.data 
-        };
-      }).sort((a, b) => a.time.localeCompare(b.time));
+      const processedSlots = rawData
+        .map((item) => {
+          const timeOnly = item.data.split(" ")[1].substring(0, 5);
+          return {
+            time: timeOnly,
+            status: item.status,
+            fullDate: item.data,
+          };
+        })
+        .sort((a, b) => a.time.localeCompare(b.time));
 
       setSlots(processedSlots);
-
     } catch (err) {
       console.error(err);
       setError("Nie udało się pobrać harmonogramu. Zaloguj się ponownie.");
@@ -67,7 +77,7 @@ export default function Scheduler({ triggerPopUp }) {
     } else {
       timer = setTimeout(() => setShowConfirmation(false), 300);
     }
-    return () => clearTimeout(timer); 
+    return () => clearTimeout(timer);
   }, [selectedSlots]);
 
   const handleSlotToggle = (time) => {
@@ -87,17 +97,20 @@ export default function Scheduler({ triggerPopUp }) {
   };
 
   const handleBooking = async () => {
-    const formattedData = selectedSlots.map(time => `${date} ${time}:00`);
+    const formattedData = selectedSlots.map((time) => `${date} ${time}:00`);
 
     try {
-      const response = await fetch("http://localhost:5000/api/bookings/editBookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "http://localhost:5000/api/bookings/editBookings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ data: formattedData, clientid: clientid }),
         },
-        credentials: 'include', 
-        body: JSON.stringify({ data: formattedData, clientid: clientid }),
-      });
+      );
 
       const result = await response.json();
 
@@ -105,13 +118,12 @@ export default function Scheduler({ triggerPopUp }) {
         throw new Error(result.error || "Błąd podczas zapisywania rezerwacji");
       }
 
-      setSelectedSlots([]); 
+      setSelectedSlots([]);
       triggerPopUp(result.msg || "Rezerwacja zakończona sukcesem");
 
       setTimeout(() => {
-        fetchSlots(); 
+        fetchSlots();
       }, 300);
-
     } catch (error) {
       console.error(error);
       triggerPopUp(error.message || "Wystąpił błąd podczas rezerwacji.");
@@ -132,7 +144,9 @@ export default function Scheduler({ triggerPopUp }) {
         />
       </header>
       <main>
-        {isLoading && <p className="slots-loading">Ładowanie dostępnych godzin...</p>}
+        {isLoading && (
+          <p className="slots-loading">Ładowanie dostępnych godzin...</p>
+        )}
         {error && <p className="error-msg">{error}</p>}
         {!isLoading && !error && (
           <div className="slots-container">
