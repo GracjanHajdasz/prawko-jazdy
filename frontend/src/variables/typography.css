@@ -1,0 +1,229 @@
+/* ------------------------------------------------
+   MOBILE  (default – mobile first)
+   ------------------------------------------------ */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500&display=swap");
+
+:root {
+  /* --- Heading / Display --- */
+  --heading-display-family: "Outfit", sans-serif;
+  --heading-display-size: 64px;
+  --heading-display-weight: 400;
+  --heading-display-line-height: 48px;
+  --heading-display-letter-spacing: -0.8px;
+
+  /* --- Heading / H1 --- */
+  --heading-h1-family: "Outfit", sans-serif;
+  --heading-h1-size: 48px;
+  --heading-h1-weight: 400;
+  --heading-h1-line-height: 40px;
+  --heading-h1-letter-spacing: -0.32px;
+
+  /* --- Heading / H2 --- */
+  --heading-h2-family: "Outfit", sans-serif;
+  --heading-h2-size: 32px;
+  --heading-h2-weight: 400;
+  --heading-h2-line-height: 32px;
+  --heading-h2-letter-spacing: -0.32px;
+
+  /* --- Heading / H3 --- */
+  --heading-h3-family: "Outfit", sans-serif;
+  --heading-h3-size: 24px;
+  --heading-h3-weight: 400;
+  --heading-h3-line-height: 28px;
+  --heading-h3-letter-spacing: -0.12px;
+
+  /* --- Heading / H4 --- */
+  --heading-h4-family: "Outfit", sans-serif;
+  --heading-h4-size: 20px;
+  --heading-h4-weight: 400;
+  --heading-h4-line-height: 24px;
+  --heading-h4-letter-spacing: 0px;
+
+  /* --- Body / Large --- */
+  --body-large-family: "Outfit", sans-serif;
+  --body-large-size: 18px;
+  --body-large-weight: 400;
+  --body-large-line-height: 24px;
+  --body-large-letter-spacing: 0px;
+
+  /* --- Body / Default --- */
+  --body-default-family: "Outfit", sans-serif;
+  --body-default-size: 16px;
+  --body-default-weight: 400;
+  --body-default-line-height: 22px;
+  --body-default-letter-spacing: 0px;
+
+  /* --- Body / Small --- */
+  --body-small-family: "Outfit", sans-serif;
+  --body-small-size: 14px;
+  --body-small-weight: 400;
+  --body-small-line-height: 18px;
+  --body-small-letter-spacing: 0px;
+
+  /* --- Utility / Button --- */
+  --utility-button-family: "Outfit", sans-serif;
+  --utility-button-size: 16px;
+  --utility-button-weight: 500;
+  --utility-button-line-height: 16px;
+  --utility-button-letter-spacing: 0px;
+
+  /* --- Utility / Label --- */
+  --utility-label-family: "Outfit", sans-serif;
+  --utility-label-size: 14px;
+  --utility-label-weight: 400;
+  --utility-label-line-height: 18px;
+  --utility-label-letter-spacing: 0px;
+
+  /* --- Utility / Caption --- */
+  --utility-caption-family: "Outfit", sans-serif;
+  --utility-caption-size: 12px;
+  --utility-caption-weight: 400;
+  --utility-caption-line-height: 17px;
+  --utility-caption-letter-spacing: 0px;
+}
+
+/* ------------------------------------------------
+   TABLET  ≥ 768px
+   Zmienia się: line-height i letter-spacing nagłówków
+   ------------------------------------------------ */
+@media (min-width: 768px) {
+  :root {
+    --heading-display-line-height: 64px;
+    --heading-display-letter-spacing: -1.4px;
+
+    --heading-h1-line-height: 48px;
+    --heading-h1-letter-spacing: -0.6px;
+
+    --heading-h2-line-height: 32px;
+    --heading-h2-letter-spacing: -0.32px;
+
+    --heading-h3-line-height: 32px;
+    --heading-h3-letter-spacing: -0.24px;
+
+    --heading-h4-line-height: 30px;
+    --heading-h4-letter-spacing: 0px;
+
+    --body-large-line-height: 26px;
+    --body-default-line-height: 24px;
+    --body-small-line-height: 20px;
+  }
+}
+
+/* ------------------------------------------------
+   DESKTOP  ≥ 1280px
+   Większe line-heights, mocniejszy letter-spacing
+   ------------------------------------------------ */
+@media (min-width: 1280px) {
+  :root {
+    --heading-display-line-height: 70px;
+    --heading-display-letter-spacing: -1.92px;
+
+    --heading-h1-line-height: 58px;
+    --heading-h1-letter-spacing: -0.96px;
+
+    --heading-h2-line-height: 42px;
+    --heading-h2-letter-spacing: -0.48px;
+
+    --heading-h3-line-height: 32px;
+    --heading-h3-letter-spacing: -0.24px;
+
+    --heading-h4-line-height: 30px;
+    --heading-h4-letter-spacing: 0px;
+
+    --body-large-line-height: 28px;
+    --body-default-line-height: 26px;
+    --body-small-line-height: 21px;
+  }
+}
+
+/* ================================================
+   KLASY POMOCNICZE
+   ================================================ */
+
+.text-display {
+  font-family: var(--heading-display-family);
+  font-size: var(--heading-display-size);
+  font-weight: var(--heading-display-weight);
+  line-height: var(--heading-display-line-height);
+  letter-spacing: var(--heading-display-letter-spacing);
+}
+
+.text-h1 {
+  font-family: var(--heading-h1-family);
+  font-size: var(--heading-h1-size);
+  font-weight: var(--heading-h1-weight);
+  line-height: var(--heading-h1-line-height);
+  letter-spacing: var(--heading-h1-letter-spacing);
+}
+
+.text-h2 {
+  font-family: var(--heading-h2-family);
+  font-size: var(--heading-h2-size);
+  font-weight: var(--heading-h2-weight);
+  line-height: var(--heading-h2-line-height);
+  letter-spacing: var(--heading-h2-letter-spacing);
+}
+
+.text-h3 {
+  font-family: var(--heading-h3-family);
+  font-size: var(--heading-h3-size);
+  font-weight: var(--heading-h3-weight);
+  line-height: var(--heading-h3-line-height);
+  letter-spacing: var(--heading-h3-letter-spacing);
+}
+
+.text-h4 {
+  font-family: var(--heading-h4-family);
+  font-size: var(--heading-h4-size);
+  font-weight: var(--heading-h4-weight);
+  line-height: var(--heading-h4-line-height);
+  letter-spacing: var(--heading-h4-letter-spacing);
+}
+
+.text-body-lg {
+  font-family: var(--body-large-family);
+  font-size: var(--body-large-size);
+  font-weight: var(--body-large-weight);
+  line-height: var(--body-large-line-height);
+  letter-spacing: var(--body-large-letter-spacing);
+}
+
+.text-body {
+  font-family: var(--body-default-family);
+  font-size: var(--body-default-size);
+  font-weight: var(--body-default-weight);
+  line-height: var(--body-default-line-height);
+  letter-spacing: var(--body-default-letter-spacing);
+}
+
+.text-body-sm {
+  font-family: var(--body-small-family);
+  font-size: var(--body-small-size);
+  font-weight: var(--body-small-weight);
+  line-height: var(--body-small-line-height);
+  letter-spacing: var(--body-small-letter-spacing);
+}
+
+.text-button {
+  font-family: var(--utility-button-family);
+  font-size: var(--utility-button-size);
+  font-weight: var(--utility-button-weight);
+  line-height: var(--utility-button-line-height);
+  letter-spacing: var(--utility-button-letter-spacing);
+}
+
+.text-label {
+  font-family: var(--utility-label-family);
+  font-size: var(--utility-label-size);
+  font-weight: var(--utility-label-weight);
+  line-height: var(--utility-label-line-height);
+  letter-spacing: var(--utility-label-letter-spacing);
+}
+
+.text-caption {
+  font-family: var(--utility-caption-family);
+  font-size: var(--utility-caption-size);
+  font-weight: var(--utility-caption-weight);
+  line-height: var(--utility-caption-line-height);
+  letter-spacing: var(--utility-caption-letter-spacing);
+}

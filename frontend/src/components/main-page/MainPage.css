@@ -33,7 +33,7 @@
 }
 
 .main-page-container section {
-  background-color: white;
+  background-color: var(--content-brand);
   border-radius: 20px;
   height: 50vh;
   width: 22vw;
@@ -66,7 +66,8 @@
   text-align: center;
 }
 
-.main-p-section h2, .main-p-section p {
+.main-p-section h2,
+.main-p-section p {
   display: flex;
   flex-direction: column;
   justify-content: center;

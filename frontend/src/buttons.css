@@ -1,0 +1,248 @@
+.button {
+  align-items: center;
+  border-radius: 16px;
+  display: inline-flex;
+  gap: 12px;
+  padding: 16px;
+  position: relative;
+}
+
+.button .class {
+  aspect-ratio: 1 !important;
+  height: 16px !important;
+  position: relative !important;
+  width: 16px !important;
+}
+
+.button .class-2 {
+  aspect-ratio: 1 !important;
+  height: 24px !important;
+  position: relative !important;
+  width: 24px !important;
+}
+
+.button .label {
+  align-items: center;
+  display: flex;
+  font-family: var(--utility-button-font-family);
+  font-size: var(--utility-button-font-size);
+  font-style: var(--utility-button-font-style);
+  font-weight: var(--utility-button-font-weight);
+  letter-spacing: var(--utility-button-letter-spacing);
+  line-height: var(--utility-button-line-height);
+  margin-top: -1px;
+  position: relative;
+  width: fit-content;
+}
+
+.button .tag {
+  align-items: center;
+  border-radius: 4px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  justify-content: center;
+  padding: 0px 4px;
+  position: relative;
+}
+
+.button .element {
+  align-items: center;
+  display: flex;
+  font-family: var(--utility-caption-font-family);
+  font-size: var(--utility-caption-font-size);
+  font-style: var(--utility-caption-font-style);
+  font-weight: var(--utility-caption-font-weight);
+  justify-content: center;
+  letter-spacing: var(--utility-caption-letter-spacing);
+  line-height: var(--utility-caption-line-height);
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.button.active {
+  background-color: #314dd5;
+  left: 382px;
+}
+
+.button.disabled {
+  background-color: #e0e4eb;
+  left: 563px;
+}
+
+.button.hover {
+  left: 201px;
+}
+
+.button.default {
+  left: 20px;
+}
+
+.button.ghost.medium {
+  top: 399px;
+}
+
+.button.default.medium {
+  top: 263px;
+}
+
+.button.outline.hover {
+  background-color: #e4e8ff;
+}
+
+.button.hover.ghost {
+  background-color: #e4e8ff;
+}
+
+.button.outline.active {
+  border: 1px solid;
+  border-color: #e0e4eb;
+}
+
+.button.hover.default {
+  background-color: #5a75f5;
+}
+
+.button.default.large {
+  top: 20px;
+}
+
+.button.outline.default {
+  border: 1px solid;
+  border-color: #e0e4eb;
+}
+
+.button.default.default {
+  background-color: #314dd5;
+}
+
+.button.ghost.large {
+  top: 156px;
+}
+
+.button.outline.disabled {
+  border: 1px solid;
+  border-color: #e0e4eb;
+}
+
+.button.outline.medium {
+  top: 331px;
+}
+
+.button.outline.large {
+  top: 88px;
+}
+
+.button.active .label {
+  color: #ffffff;
+}
+
+.button.disabled .label {
+  color: #4e576a;
+}
+
+.button.medium .label {
+  white-space: nowrap;
+}
+
+.button.outline.hover .label {
+  color: #000419;
+}
+
+.button.hover.ghost .label {
+  color: #000419;
+}
+
+.button.hover.default .label {
+  color: #ffffff;
+}
+
+.button.ghost.default .label {
+  color: #000419;
+}
+
+.button.outline.default .label {
+  color: #000419;
+}
+
+.button.default.default .label {
+  color: #ffffff;
+}
+
+.button.active .tag {
+  background-color: #ffffff;
+}
+
+.button.disabled .tag {
+  background-color: #4e576a;
+}
+
+.button.medium .tag {
+  height: 16px;
+}
+
+.button.outline.hover .tag {
+  background-color: #314dd5;
+}
+
+.button.hover.ghost .tag {
+  background-color: #314dd5;
+}
+
+.button.hover.default .tag {
+  background-color: #ffffff;
+}
+
+.button.ghost.default .tag {
+  background-color: #314dd5;
+}
+
+.button.outline.default .tag {
+  background-color: #314dd5;
+}
+
+.button.default.default .tag {
+  background-color: #ffffff;
+}
+
+.button.active .element {
+  color: #000419;
+}
+
+.button.large .element {
+  margin-top: -1px;
+}
+
+.button.disabled .element {
+  color: #ffffff;
+}
+
+.button.medium .element {
+  margin-top: -1.5px;
+}
+
+.button.outline.hover .element {
+  color: #ffffff;
+}
+
+.button.hover.ghost .element {
+  color: #ffffff;
+}
+
+.button.hover.default .element {
+  color: #000419;
+}
+
+.button.ghost.default .element {
+  color: #ffffff;
+}
+
+.button.outline.default .element {
+  color: #ffffff;
+}
+
+.button.default.default .element {
+  color: #000419;
+}

@@ -1,0 +1,31 @@
+:root {
+  /* -----------------------------------------------
+     Spacing (gap, padding, margin)
+     Skala oparta na siatce 8px
+  ----------------------------------------------- */
+  --space-000: 0px; /*   0 */
+  --space-025: 2px; /*   2 */
+  --space-050: 4px; /*   4 */
+  --space-100: 8px; /*   8 */
+  --space-150: 12px; /*  12 */
+  --space-200: 16px; /*  16 */
+  --space-300: 24px; /*  24 */
+  --space-400: 32px; /*  32 */
+  --space-500: 40px; /*  40 */
+  --space-600: 48px; /*  48 */
+  --space-800: 64px; /*  64 */
+  --space-1000: 80px; /*  80 */
+  --space-1200: 96px; /*  96 */
+  --space-1600: 128px; /* 128 */
+
+  /* -----------------------------------------------
+     Border Radius
+  ----------------------------------------------- */
+  --radius-000: 0px; /* ostre rogi        */
+  --radius-050: 4px; /* lekko zaokrąglone */
+  --radius-100: 8px; /* standardowe       */
+  --radius-150: 12px; /* średnie           */
+  --radius-200: 16px; /* duże              */
+  --radius-300: 24px; /* bardzo duże       */
+  --radius-full: 9999px; /* pill / okrągłe    */
+}

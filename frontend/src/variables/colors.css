@@ -1,0 +1,28 @@
+:root {
+  /* Background */
+  --background-canvas: #f8f9fa;
+  --background-surface: #ffffff;
+  --background-subtle: #e0e4eb;
+  --background-very-subtle: #f8f9fa;
+  --background-disabled: #e0e4eb;
+  --background-brand-subtle: #f3f5ff;
+
+  /* Content (tekst / ikony) */
+  --content-primary: #00051a;
+  --content-secondary: #4e576a;
+  --content-disabled: #4e576a;
+  --content-inverse: #ffffff;
+  --content-brand: #314dd5;
+  --content-error: #e3171a;
+
+  /* Border */
+  --border-subtle: #e0e4eb;
+  --border-strong: #8a94a6;
+  --border-brand: #314dd5;
+  --border-error: #e3171a;
+
+  /* Button */
+  --button-bg-default: #314dd5;
+  --button-bg-hover: #5b75f5;
+  --button-bg-active: #314dd5;
+}
