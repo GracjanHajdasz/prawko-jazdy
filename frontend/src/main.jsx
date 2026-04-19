@@ -4,6 +4,7 @@ import "./index.css";
 import "./variables/colors.css";
 import "./variables/spacing.css";
 import "./variables/typography.css";
+import "./buttons.css";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(

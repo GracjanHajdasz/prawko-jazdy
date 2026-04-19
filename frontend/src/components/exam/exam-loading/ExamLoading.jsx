@@ -2,7 +2,7 @@ import "./ExamLoading.css";
 import { useEffect, useState, useRef } from "react";
 
 export default function ExamLoading({ setIsLoaded }) {
-  function Countdown() {
+  /*function Countdown() {
     const [timeLeft, setTimeLeft] = useState(30);
     const intervalRef = useRef(null);
 
@@ -21,34 +21,56 @@ export default function ExamLoading({ setIsLoaded }) {
     if (timeLeft <= 0) setIsLoaded(true);
 
     return <span>{timeLeft}</span>;
-  }
+  }*/
   return (
     <div className="exam-loading-container">
-      <h1>Przygotuj się, egzamin rozpocznie się za: {Countdown()}</h1>
-      <h2>Instrukcja dla kursanta</h2>
-      <p>
-        Za chwilę rozpocznie się próbny egzamin teoretyczny. Przeczytaj uważnie
-        poniższe informacje:
-      </p>
+      <div className="exam-loading-header">
+        <h4 className="text-h4">Za chwilę rozpoczniesz egzamin próbny</h4>
+        <p className="text-body-sm">
+          Zapoznaj się z poniższymi informacjami przed startem.
+        </p>
+      </div>
 
-      <ul>
-        <li>Egzamin składa się z pytań jednokrotnego wyboru.</li>
-        <li>Na każde pytanie możesz udzielić tylko jednej odpowiedzi.</li>
-        <li>
-          Po zatwierdzeniu odpowiedzi nie ma możliwości powrotu do poprzedniego
-          pytania.
-        </li>
-        <li>Czytaj pytania dokładnie i zwracaj uwagę na szczegóły.</li>
-        <li>
-          Czas na udzielenie odpowiedzi jest ograniczony – pilnuj licznika
-          czasu.
-        </li>
-        <li>Nie używaj przycisku „Wstecz” w przeglądarce.</li>
-        <li>Wynik zobaczysz po zakończeniu egzaminu.</li>
-      </ul>
-      <button className="btn" onClick={() => setIsLoaded(true)}>
-        Rozpocznij egzamin
-      </button>
+      <div className="exam-loading-content">
+        <p className="text-body-lg">Kilka wskazówek przed startem:</p>
+        <ul>
+          <li className="text-body">
+            Tylko jedna szansa: Na każde pytanie możesz udzielić wyłącznie
+            jednej odpowiedzi.
+          </li>
+          <li className="text-body">
+            Idź do przodu: Po zatwierdzeniu odpowiedzi nie będziesz mógł wrócić
+            do poprzedniego pytania.
+          </li>
+          <li className="text-body">
+            Czas ma znaczenie: Masz ograniczony czas na każde pytanie –
+            kontroluj licznik, aby nic Cię nie zaskoczyło.
+          </li>
+          <li className="text-body">
+            Bądź uważny: Czytaj treść pytań dokładnie; czasem jeden szczegół na
+            zdjęciu lub filmie zmienia wszystko.
+          </li>
+          <li className="text-body">
+            Zostań w oknie: Nie używaj przycisku „Wstecz" w przeglądarce, aby
+            nie przerwać sesji egzaminacyjnej.
+          </li>
+          <li className="text-body">
+            Twój wynik: Pełne podsumowanie i statystyki zobaczysz od razu po
+            zakończeniu całego egzaminu.
+          </li>
+        </ul>
+      </div>
+
+      <div className="exam-loading-container-checkbox-form">
+        <input type="checkbox" />
+        <p>Nie pokazuj tego okna w przyszłości</p>
+      </div>
+
+      <div className="exam-loading-container-buttons">
+        <button className="button" onClick={() => setIsLoaded(true)}>
+          Rozpocznij egzamin
+        </button>
+      </div>
     </div>
   );
 }
