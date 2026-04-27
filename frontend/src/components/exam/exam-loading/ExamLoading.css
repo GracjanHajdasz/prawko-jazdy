@@ -69,3 +69,11 @@
   border: 1px solid var(--border-subtle);
   background: #ffffff;
 }
+
+/*buttons*/
+.exam-loading-container-buttons {
+  width: 746px;
+  height: 56px;
+  display: flex;
+  justify-content: space-between;
+}

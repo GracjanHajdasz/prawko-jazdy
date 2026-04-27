@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./ExamLoading.css";
 import { useEffect, useState, useRef } from "react";
 
@@ -67,7 +68,10 @@ export default function ExamLoading({ setIsLoaded }) {
       </div>
 
       <div className="exam-loading-container-buttons">
-        <button className="button" onClick={() => setIsLoaded(true)}>
+        <Link className="button" to="/testy">
+          Anuluj i wyjdz
+        </Link>
+        <button className="button default" onClick={() => setIsLoaded(true)}>
           Rozpocznij egzamin
         </button>
       </div>
